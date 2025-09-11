@@ -4,4 +4,5 @@ Check out Lazarus-931.github.io!
 I'm Alazer Manakelew, I go to Northeastern for CS. 
 {🇪🇹: Born, 🇺🇸: Raised}
 
-![Me!](/assets/images/prof_pic.jpg)
+![Me!](/assets/prof_pic.jpg)
+**Figure 1.1** Me, circa 2025.
