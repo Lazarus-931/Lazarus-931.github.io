@@ -1,90 +1,92 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alazer Manakelew</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            line-height: 1.6;
-            color: #333;
-            background-color: #fff;
-        }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Alazer Manakelew</title>
+        <style>
+            body {
+                font-family: serif;
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 40px 20px;
+                line-height: 1.6;
+                color: #333;
+                background-color: #fff;
+            }
 
-        .container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 40px;
-        }
-
-        .intro {
-            flex: 1;
-        }
-
-        .name {
-            font-size: 2em;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #2c3e50;
-        }
-
-        .info {
-            font-size: 1.1em;
-            margin-bottom: 10px;
-            color: #555;
-        }
-
-        .flags {
-            font-size: 1em;
-            color: #666;
-            font-style: italic;
-        }
-
-        .profile-section {
-            flex: 1;
-            text-align: center;
-        }
-
-        .profile-img {
-            max-width: 300px;
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin-bottom: 15px;
-        }
-
-        .figure-caption {
-            font-style: italic;
-            color: #666;
-            font-size: 0.9em;
-        }
-
-        @media (max-width: 768px) {
             .container {
-                flex-direction: column;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 40px;
+            }
+
+            .intro {
+                flex: 1;
+            }
+
+            .name {
+                font-size: 2em;
+                font-weight: 600;
+                margin-bottom: 10px;
+                color: #2c3e50;
+            }
+
+            .info {
+                font-size: 1.1em;
+                margin-bottom: 10px;
+                color: #555;
+            }
+
+            .flags {
+                font-size: 1em;
+                color: #666;
+                font-style: italic;
+            }
+
+            .profile-section {
+                flex: 1;
                 text-align: center;
             }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="intro">
-            <h1 class="name">Alazer Manakelew</h1>
-            <p class="info">I go to Northeastern for CS.</p>
-            <p class="flags">{🇪🇹: Born, 🇺🇸: Raised}</p>
-        </div>
 
-        <div class="profile-section">
-            <img src="/assets/prof_pic.jpg" alt="Me!" class="profile-img">
-            <p class="figure-caption"><strong>Figure 1.1</strong> Me, circa 2025.</p>
+            .profile-img {
+                max-width: 300px;
+                width: 100%;
+                height: auto;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                margin-bottom: 15px;
+            }
+
+            .figure-caption {
+                font-style: italic;
+                color: #666;
+                font-size: 0.9em;
+            }
+
+            @media (max-width: 768px) {
+                .container {
+                    flex-direction: column;
+                    text-align: center;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="intro">
+                <h1 class="name">Alazer Manakelew</h1>
+                <p class="info">I go to Northeastern for CS.</p>
+                <p class="flags">{🇪🇹: Born, 🇺🇸: Raised}</p>
+            </div>
+
+            <div class="profile-section">
+                <img src="/assets/prof_pic.jpg" alt="Me!" class="profile-img" />
+                <p class="figure-caption">
+                    <strong>Figure 1.1</strong> Me, circa 2025.
+                </p>
+            </div>
         </div>
-    </div>
-</body>
+    </body>
 </html>
