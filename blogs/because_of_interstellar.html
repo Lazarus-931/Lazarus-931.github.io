@@ -36,8 +36,18 @@
         <h1>Blackholes but in ASCII (All thanks to Interstellar)</h1>
         <h2>What I learned as well as source for anyone attempting this</h2>
         <p>
-            <em>While you read this, listen to the film's score</em>
-            <button id="playButton" onclick="playAudio()">▶️ Play Audio</button>
+            <em>While you read this, listen to the film's score, a masterpiece
+                <a href="#" class="citation"
+                    >[1]
+                    <span class="tooltip">
+                        <img src="../assets/blog_images/Flaming Piano.jpg"
+                    </span>
+                </a>
+
+
+
+            </em>
+            <button id="playButton" onclick="playAudio()">▶️</button>
             <span id="audioStatus" class="audio-error"></span>
         </p>
         <audio
@@ -53,14 +63,28 @@
             >, I decided to make a black hole rendering purely from ASCII.
         </p>
         <p>
-            <strong>TL;DR</strong> - Made a code to show a live black hole in
-            action with only ASCII. Link to
+            <strong>TL;DR</strong> - Made a code to show a live black hole
+            <a href="#" class="citation"
+                >[2]
+                <span class="tooltip">
+                    <span class="simple-cube"
+                        >A curved gravitational field made up of spacetime,
+                        where so much matter is condenced in such a small area,
+                        that it doesn't technically have any mass. Bonkers
+                        ik...</span
+                    >
+                </span>
+            </a>
+
+            in action with only ASCII. Link to
             <a href="https://github.com/Lazarus-931/ascii_tings">GitHub</a>.
         </p>
         <h3>What???</h3>
         <p>
             I know right, thought so too initially. But below, I will break down
-            the process bit by bit to make it easier to understand.
+            the process bit by bit to make it easier to understand. This has
+            taken me deep into a rabbit hole and I would like to share it with
+            you guys.
         </p>
         <h4>Why ASCII?</h4>
         <p>
@@ -95,6 +119,10 @@
                         "(Audio file not found - add interstellar_theme.mp3 to ../assets/audio/)";
                 });
             }
+
+            audio.addEventListener("ended", () => {
+                playButton.innerHTML = "▶️";
+            });
         </script>
     </body>
 </html>
