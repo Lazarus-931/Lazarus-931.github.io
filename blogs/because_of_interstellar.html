@@ -30,22 +30,48 @@
                 font-size: 0.9em;
                 margin-left: 5px;
             }
+            .citation {
+                position: relative;
+                display: inline-block;
+            }
+            .citation .tooltip {
+                visibility: hidden;
+                width: 220px;
+                background-color: #f9f9f9;
+                color: #000;
+                text-align: center;
+                border-radius: 6px;
+                padding: 5px 0;
+                position: absolute;
+                z-index: 1;
+                bottom: 125%;
+                left: 50%;
+                margin-left: -110px;
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+            .citation .tooltip img {
+                width: 100%;
+                height: auto;
+            }
+            .citation:hover .tooltip {
+                visibility: visible;
+                opacity: 1;
+            }
         </style>
     </head>
     <body>
         <h1>Blackholes but in ASCII (All thanks to Interstellar)</h1>
         <h2>What I learned as well as source for anyone attempting this</h2>
         <p>
-            <em>While you read this, listen to the film's score, a masterpiece
+            <em
+                >While you read this, listen to the film's score, a masterpiece
                 <a href="#" class="citation"
                     >[1]
                     <span class="tooltip">
-                        <img src="../assets/blog_images/Flaming Piano.jpg"
+                        <img src="../assets/blog_images/Flaming Piano.jpg" />
                     </span>
                 </a>
-
-
-
             </em>
             <button id="playButton" onclick="playAudio()">▶️</button>
             <span id="audioStatus" class="audio-error"></span>
@@ -67,12 +93,9 @@
             <a href="#" class="citation"
                 >[2]
                 <span class="tooltip">
-                    <span class="simple-cube"
-                        >A curved gravitational field made up of spacetime,
-                        where so much matter is condenced in such a small area,
-                        that it doesn't technically have any mass. Bonkers
-                        ik...</span
-                    >
+                    A curved gravitational field made up of spacetime, where so
+                    much matter is condenced in such a small area, that it
+                    doesn't technically have any mass. Bonkers ik...
                 </span>
             </a>
 
@@ -105,7 +128,18 @@
             this. Each dot kind of looks like ASCII, but now rotating!
         </p>
         <h3>Math</h3>
-        <p>"Uhh boring!" I stand to disagree and below is why:</p>
+        <p>
+            With a simple search one can discover a plethora of black holes,
+            with each having distinct variations. But for the sake of simplicty
+            and my peace of mind we will be working with a black hole popularly
+            represented in Interstellar such as the one below!
+        </p>
+
+        <img
+            src="/assets/blog_images/idk_seems_cool copy.gif"
+            alt="Me!"
+            class="profile-img"
+        />
 
         <script>
             const audio = document.getElementById("myAudio");
