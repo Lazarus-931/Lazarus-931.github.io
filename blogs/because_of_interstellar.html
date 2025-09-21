@@ -103,16 +103,17 @@
             >, I decided to make a black hole rendering purely from ASCII
             <a href="#" class="citation"
                 >[2]
-                    <span class="tooltip">
-                        I will be using: '.', ',', '-', '~', ':', ';', '=', '!', '*', '#', '$', '@'
-                    </span>
+                <span class="tooltip">
+                    I will be using: '.', ',', '-', '~', ':', ';', '=', '!',
+                    '*', '#', '$', '@'
+                </span>
             </a>
-            . Not in c however, since that is not my forte, but in python.
-            No OpenGL, no graphics library, just pure math and ASCII characters.
+            . Not in c however, since that is not my forte, but in python. No
+            OpenGL, no graphics library, just pure math and ASCII characters.
             <a href="#" class="citation"
                 >[3]
                 <span class="tooltip">
-                    <img src=".../assets/blog_images/image3.jpg" />
+                    <img src="../assets/blog_images/image3.jpg" />
                 </span>
             </a>
         </p>
@@ -193,8 +194,7 @@
             <figcaption>
                 This represents the horizion which is just a sphere. It is going
                 to be going outwards at the speed of light!
-                <a href="https://www.desmos.com/calculator/fx4glt1ixc"
-                    >[5]</a
+                <a href="https://www.desmos.com/calculator/fx4glt1ixc">[5]</a>
             </figcaption>
         </figure>
 
@@ -208,36 +208,64 @@
                 This represents the accretion disc of the black hole. A kind of
                 brain-scrambling representation of the outer part of the black
                 hole!
-                <a href="https://www.desmos.com/calculator/crpikcjeuy"
-                    >[6]</a
+                <a href="https://www.desmos.com/calculator/crpikcjeuy">[6]</a>
             </figcaption>
         </figure>
 
         <p>
-            So, let's start with the sphere. Just a sphere, and from highschool math class
-            I can distinctively remember the formula for a sphere as:
+            So, let's start with the sphere. Just a sphere, and from highschool
+            math class I can distinctively remember the formula for a sphere as:
             <br />
-            <em>
-                x^2 + y^2 + z^2 = r^2
-            </em>
+            <em> x^2 + y^2 + z^2 = r^2 </em>
             <br />
         </p>
 
+        <p>
+            Were we going to make a cube, then it would have been much easier. A
+            cube has 8 points and lines connecting them. It could easily be
+            represented below as all it's points:
+            <br />
+            <em>
+                points = [(-1, -1, -1), (1, -1, -1), (1, 1, -1), (-1, 1, -1),
+                (-1, -1, 1), (1, -1, 1), (1, 1, 1), (-1, 1, 1)]
+            </em>
+            <br />
+            But a sphere is different, it has infinite points. So how do we do
+            this? We first select the radius, then we use parametric equations
+            to represent the sphere. The formula for a sphere is:
+            <br />
+            <em>
+                x = r * sin(φ) * cos(θ) <br />
+                y = r * sin(φ) * sin(θ) <br />
+                z = r * cos(φ)
+            </em>
+            <br />
+            Where φ (phi) is the polar angle (0 to π) and θ (theta) is the
+            azimuthal
+            <a href="#" class="citation"
+                >[7]
+                <span class="tooltip">
+                    This is not a mayan demigod, it's a basically an angle
+                    around an axis
+                </span>
+            </a>
 
+            angle (0 to 2π).
+        </p>
 
+        <pre><code class="language-python">
+            import math
 
-
-
-
-
-
-
-
-
-
-
-
-
+            r = 0.5 // limiting this to 0.5 for scaling purposes
+            points = []
+            // Parametric equations
+            for phi in [i * math.pi / 20 for i in range(21)]:  # 0 to π
+                for theta in [i * 2 * math.pi / 40 for i in range(41)]:  # 0 to 2π
+                    x = r * math.sin(phi) * math.cos(theta) // x = r * sin(φ) * cos(θ)
+                    y = r * math.sin(phi) * math.sin(theta) // y = r * sin(φ) * sin(θ)
+                    z = r * math.cos(phi) // z = r * cos(φ)
+                    points.append((x, y, z))
+        </code></pre>
 
         <script>
             const audio = document.getElementById("myAudio");
