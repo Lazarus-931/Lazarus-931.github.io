@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Blackholes in ASCII</title>
+        <title>Because of Interstellar</title>
         <style>
             body {
                 font-family:
@@ -25,25 +25,26 @@
                 font-size: 1em;
                 margin-left: 5px;
             }
+            .audio-error {
+                color: #666;
+                font-size: 0.9em;
+                margin-left: 5px;
+            }
         </style>
     </head>
     <body>
         <h1>Blackholes but in ASCII (All thanks to Interstellar)</h1>
-
         <h2>What I learned as well as source for anyone attempting this</h2>
-
         <p>
             <em>While you read this, listen to the film's score</em>
-            <button onclick="document.getElementById('myAudio').play()">
-                ▶️ Play Audio
-            </button>
+            <button id="playButton" onclick="playAudio()">▶️ Play Audio</button>
+            <span id="audioStatus" class="audio-error"></span>
         </p>
-
         <audio
             id="myAudio"
             src="../assets/audio/interstellar_theme.mp3"
+            preload="metadata"
         ></audio>
-
         <p>
             Black holes are amazing and also intriguing. Which is why, inspired
             by the
@@ -51,19 +52,16 @@
                 >rotating donut</a
             >, I decided to make a black hole rendering purely from ASCII.
         </p>
-
         <p>
             <strong>TL;DR</strong> - Made a code to show a live black hole in
             action with only ASCII. Link to
             <a href="https://github.com/Lazarus-931/ascii_tings">GitHub</a>.
         </p>
-
         <h3>What???</h3>
         <p>
             I know right, thought so too initially. But below, I will break down
             the process bit by bit to make it easier to understand.
         </p>
-
         <h4>Why ASCII?</h4>
         <p>
             The donut ASCII has always been on the back of my mind, and I
@@ -73,7 +71,6 @@
             reminder of the donut.c led me to a unified idea: a black hole but
             in ASCII!
         </p>
-
         <p>
             Also, it's cool because after doing a little research, the first
             image (or visual) was done by a
@@ -83,8 +80,21 @@
             >, and really you will see below how similar my results are with
             this. Each dot kind of looks like ASCII, but now rotating!
         </p>
-
         <h3>Math</h3>
         <p>"Uhh boring!" I stand to disagree and below is why:</p>
+
+        <script>
+            const audio = document.getElementById("myAudio");
+            const playButton = document.getElementById("playButton");
+            const audioStatus = document.getElementById("audioStatus");
+
+            function playAudio() {
+                audio.play().catch((error) => {
+                    console.error("Audio playback failed:", error);
+                    audioStatus.textContent =
+                        "(Audio file not found - add interstellar_theme.mp3 to ../assets/audio/)";
+                });
+            }
+        </script>
     </body>
 </html>
