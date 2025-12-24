@@ -1,1 +1,1 @@
-This is my personal website. Feel free to take a look around!
+Nothing much, code to my website!
