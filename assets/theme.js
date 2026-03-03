@@ -3,7 +3,13 @@
     const OPTIONS = ["white", "dark", "local"];
     const DEFAULT_CHOICE = "white";
     const UPDATE_MS = 30 * 1000;
-    const BIN_ID = "69a627daae596e708f593766";
+    const HARDCODED_LOCATION = {
+        city: "SF",
+        lat: 37.7749,
+        lon: -122.4194,
+        source: "hardcoded",
+    };
+    const HOVER_TEXT = "i'm in SF right now!";
     const MODE_META = {
         white: { symbol: "\u2600", title: "White mode" },
         dark: { symbol: "\u263D", title: "Black mode" },
@@ -229,47 +235,6 @@
         }
     }
 
-    function binEndpoint() {
-        return "https://api.jsonbin.io/v3/b/" + BIN_ID + "/latest";
-    }
-
-    function parseLocationPayload(payload) {
-        const record =
-            payload && typeof payload === "object" && payload.record
-                ? payload.record
-                : payload;
-        if (!record || typeof record !== "object") {
-            return null;
-        }
-
-        const lat = Number(record.lat ?? record.latitude);
-        const lon = Number(record.lon ?? record.longitude ?? record.lng);
-        if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
-            return null;
-        }
-
-        const city =
-            typeof record.city === "string" && record.city.trim().length > 0
-                ? record.city.trim()
-                : lat.toFixed(3) + ", " + lon.toFixed(3);
-
-        return { lat, lon, city };
-    }
-
-    async function fetchLiveLocation() {
-        const response = await fetch(binEndpoint(), { cache: "no-store" });
-        if (!response.ok) {
-            throw new Error("Location fetch failed: " + response.status);
-        }
-
-        const payload = await response.json();
-        const location = parseLocationPayload(payload);
-        if (!location) {
-            throw new Error("Location payload missing lat/lon");
-        }
-        return location;
-    }
-
     function updateControlButton() {
         const button = document.querySelector(".theme-cycle");
         if (!button) {
@@ -277,45 +242,17 @@
         }
 
         const mode = MODE_META[selectedChoice] || MODE_META[DEFAULT_CHOICE];
-        let title = mode.title;
-
-        if (selectedChoice === "local") {
-            if (!lastKnownLocation) {
-                title += " (location unavailable)";
-            } else {
-                title +=
-                    " - " +
-                    lastKnownLocation.city +
-                    " (" +
-                    (lastFetchWasLive ? "live" : "cached") +
-                    ")";
-            }
-        }
 
         button.textContent = mode.symbol;
-        button.title = title;
-        button.setAttribute("aria-label", title);
+        button.title = HOVER_TEXT;
+        button.setAttribute("aria-label", HOVER_TEXT);
     }
 
     async function refreshLocalTheme() {
         applyTheme("local");
         const now = new Date();
-
-        try {
-            const liveLocation = await fetchLiveLocation();
-            lastKnownLocation = liveLocation;
-            lastFetchWasLive = true;
-        } catch (_error) {
-            lastFetchWasLive = false;
-        }
-
-        if (!lastKnownLocation) {
-            const fallbackElevation = estimateElevationWithoutLocation(now);
-            const fallbackColor = skyColorFromElevation(fallbackElevation);
-            applyLocalColor(fallbackColor, fallbackElevation);
-            updateControlButton();
-            return;
-        }
+        lastKnownLocation = HARDCODED_LOCATION;
+        lastFetchWasLive = true;
 
         const elevation = solarAltitudeDegrees(
             lastKnownLocation.lat,
