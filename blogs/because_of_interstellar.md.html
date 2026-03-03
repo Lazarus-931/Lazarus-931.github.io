@@ -3,14 +3,17 @@
     <head>
         <meta charset="UTF-8" />
         <title>Because of Interstellar</title>
+        <link rel="stylesheet" href="../assets/theme.css" />
+        <script src="../assets/theme.js"></script>
         <style>
             body {
-                font-family:
-                    "Crimson Text", "Times New Roman", "Georgia", serif;
+                font-family: "Times New Roman", Times, serif;
                 line-height: 1.6;
                 max-width: 800px;
                 margin: auto;
                 padding: 20px;
+                background: var(--bg);
+                color: var(--text);
             }
             h1,
             h2,
@@ -26,7 +29,7 @@
                 margin-left: 5px;
             }
             .audio-error {
-                color: #666;
+                color: var(--muted);
                 font-size: 0.9em;
                 margin-left: 5px;
             }
@@ -37,8 +40,9 @@
             .citation .tooltip {
                 visibility: hidden;
                 width: 220px;
-                background-color: #f9f9f9;
-                color: #000;
+                background-color: var(--tooltip-bg);
+                color: var(--tooltip-text);
+                border: 1px solid var(--border);
                 text-align: center;
                 border-radius: 6px;
                 padding: 5px 0;
@@ -62,7 +66,7 @@
                 text-align: center;
                 font-style: italic;
                 font-size: 0.9em;
-                color: #666;
+                color: var(--muted);
             }
             .size-fix {
                 width: 500px;

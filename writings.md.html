@@ -1,4 +1,6 @@
 <meta charset="utf-8">
+<link rel="stylesheet" href="assets/theme.css">
+<script src="assets/theme.js"></script>
 
 <style>
 .md h1:before, .md h2:before { content: none; }
@@ -6,7 +8,7 @@
 .blog-entry {
     margin-bottom: 3em;
     padding-bottom: 2em;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--border);
 }
 
 .blog-entry:last-child {
@@ -20,7 +22,7 @@
 }
 
 .blog-title a {
-    color: #000;
+    color: var(--text);
     text-decoration: none;
 }
 
@@ -29,14 +31,14 @@
 }
 
 .blog-date {
-    color: #666;
+    color: var(--muted);
     font-size: 0.9em;
     margin-bottom: 1em;
 }
 
 .blog-abstract {
     line-height: 1.6;
-    color: #333;
+    color: var(--text);
     max-width: 650px;
 }
 </style>
