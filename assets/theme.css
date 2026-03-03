@@ -58,7 +58,7 @@ a {
 
 .theme-control button {
     border: 1px solid var(--border);
-    background: var(--bg);
+    background: var(--tooltip-bg);
     color: var(--text);
     font-family: inherit;
     cursor: pointer;

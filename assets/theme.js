@@ -47,149 +47,119 @@
         return Math.max(min, Math.min(max, value));
     }
 
-    function normalizeAngle(degrees) {
-        return ((degrees % 360) + 360) % 360;
+    function solarAltitudeDegrees(lat, lon, date) {
+        const rad = Math.PI / 180;
+        const dayStart = Date.UTC(date.getUTCFullYear(), 0, 0);
+        const dayNumber = Math.floor((date.getTime() - dayStart) / 86400000);
+        const utcHour =
+            date.getUTCHours() +
+            date.getUTCMinutes() / 60 +
+            date.getUTCSeconds() / 3600;
+
+        const gamma =
+            ((2 * Math.PI) / 365) * (dayNumber - 1 + (utcHour - 12) / 24);
+        const declination =
+            0.006918 -
+            0.399912 * Math.cos(gamma) +
+            0.070257 * Math.sin(gamma) -
+            0.006758 * Math.cos(2 * gamma) +
+            0.000907 * Math.sin(2 * gamma) -
+            0.002697 * Math.cos(3 * gamma) +
+            0.00148 * Math.sin(3 * gamma);
+        const equationOfTime =
+            229.18 *
+            (0.000075 +
+                0.001868 * Math.cos(gamma) -
+                0.032077 * Math.sin(gamma) -
+                0.014615 * Math.cos(2 * gamma) -
+                0.040849 * Math.sin(2 * gamma));
+
+        const minutes = date.getUTCHours() * 60 + date.getUTCMinutes();
+        const trueSolarMinutes =
+            (minutes + equationOfTime + 4 * lon + 1440) % 1440;
+        const hourAngle = trueSolarMinutes / 4 - 180;
+
+        const latRad = lat * rad;
+        const hourAngleRad = hourAngle * rad;
+        const cosZenith =
+            Math.sin(latRad) * Math.sin(declination) +
+            Math.cos(latRad) * Math.cos(declination) * Math.cos(hourAngleRad);
+
+        const zenith = Math.acos(clamp(cosZenith, -1, 1));
+        return 90 - zenith / rad;
     }
 
-    function sinDegrees(degrees) {
-        return Math.sin((degrees * Math.PI) / 180);
-    }
-
-    function cosDegrees(degrees) {
-        return Math.cos((degrees * Math.PI) / 180);
-    }
-
-    function tanDegrees(degrees) {
-        return Math.tan((degrees * Math.PI) / 180);
-    }
-
-    function acosDegrees(value) {
-        return (Math.acos(value) * 180) / Math.PI;
-    }
-
-    function atanDegrees(value) {
-        return (Math.atan(value) * 180) / Math.PI;
-    }
-
-    function dayOfYear(date) {
-        const year = date.getUTCFullYear();
-        const month = date.getUTCMonth();
-        const day = date.getUTCDate();
-        const start = Date.UTC(year, 0, 0);
-        const current = Date.UTC(year, month, day);
-        return Math.floor((current - start) / 86400000);
-    }
-
-    function computeSunEvent(date, lat, lon, isSunrise) {
-        const zenith = 90.833;
-        const n = dayOfYear(date);
-        const lngHour = lon / 15;
-        const t = n + ((isSunrise ? 6 : 18) - lngHour) / 24;
-        const m = 0.9856 * t - 3.289;
-        let l =
-            m + 1.916 * sinDegrees(m) + 0.02 * sinDegrees(2 * m) + 282.634;
-        l = normalizeAngle(l);
-
-        let ra = atanDegrees(0.91764 * tanDegrees(l));
-        ra = normalizeAngle(ra);
-
-        const lQuadrant = Math.floor(l / 90) * 90;
-        const raQuadrant = Math.floor(ra / 90) * 90;
-        ra = (ra + (lQuadrant - raQuadrant)) / 15;
-
-        const sinDec = 0.39782 * sinDegrees(l);
-        const cosDec = Math.cos(Math.asin(sinDec));
-        const cosH =
-            (cosDegrees(zenith) - sinDec * sinDegrees(lat)) /
-            (cosDec * cosDegrees(lat));
-
-        if (cosH > 1 || cosH < -1) {
-            return null;
-        }
-
-        let h = isSunrise ? 360 - acosDegrees(cosH) : acosDegrees(cosH);
-        h /= 15;
-
-        const localMeanTime = h + ra - 0.06571 * t - 6.622;
-        let universalTime = localMeanTime - lngHour;
-        universalTime = ((universalTime % 24) + 24) % 24;
-
-        const utcMidnight = Date.UTC(
-            date.getUTCFullYear(),
-            date.getUTCMonth(),
-            date.getUTCDate(),
-        );
-        return new Date(utcMidnight + universalTime * 3600000);
-    }
-
-    function getSunTimes(lat, lon, now) {
-        return {
-            sunrise: computeSunEvent(now, lat, lon, true),
-            sunset: computeSunEvent(now, lat, lon, false),
-        };
+    function estimateElevationWithoutLocation(now) {
+        const minutes = now.getHours() * 60 + now.getMinutes();
+        const phase = (minutes / (24 * 60)) * 2 * Math.PI - Math.PI / 2;
+        return 55 * Math.sin(phase);
     }
 
     function lerp(a, b, t) {
         return Math.round(a + (b - a) * t);
     }
 
-    function interpolateColor(colors, t) {
-        const safeT = clamp(t, 0, 1);
-        const scaled = safeT * (colors.length - 1);
-        const index = Math.floor(scaled);
-        const blend = scaled - index;
-        const a = colors[Math.min(index, colors.length - 1)];
-        const b = colors[Math.min(index + 1, colors.length - 1)];
+    function elevationToKelvin(elevation) {
+        const daylightProgress = clamp((elevation + 6) / 66, 0, 1);
+        return lerp(1800, 6500, daylightProgress);
+    }
+
+    function kelvinToRgb(kelvin) {
+        const temp = clamp(kelvin, 1000, 40000) / 100;
+        let red;
+        let green;
+        let blue;
+
+        if (temp <= 66) {
+            red = 255;
+            green = 99.4708025861 * Math.log(temp) - 161.1195681661;
+            if (temp <= 19) {
+                blue = 0;
+            } else {
+                blue = 138.5177312231 * Math.log(temp - 10) - 305.0447927307;
+            }
+        } else {
+            red = 329.698727446 * Math.pow(temp - 60, -0.1332047592);
+            green = 288.1221695283 * Math.pow(temp - 60, -0.0755148492);
+            blue = 255;
+        }
 
         return [
-            lerp(a[0], b[0], blend),
-            lerp(a[1], b[1], blend),
-            lerp(a[2], b[2], blend),
+            clamp(Math.round(red), 0, 255),
+            clamp(Math.round(green), 0, 255),
+            clamp(Math.round(blue), 0, 255),
         ];
     }
 
-    function getSkyColor(sunrise, sunset, now) {
-        const stops = [
-            [10, 10, 46],
-            [20, 24, 82],
-            [255, 107, 53],
-            [255, 209, 102],
-            [135, 206, 235],
-            [120, 190, 230],
-            [135, 206, 235],
-            [255, 209, 102],
-            [255, 107, 53],
-            [20, 24, 82],
-            [10, 10, 46],
-        ];
-
-        if (
-            !sunrise ||
-            !sunset ||
-            Number.isNaN(sunrise.getTime()) ||
-            Number.isNaN(sunset.getTime())
-        ) {
-            const dayProgress =
-                (now.getHours() * 60 + now.getMinutes()) / (24 * 60);
-            return interpolateColor(stops, dayProgress);
+    function skyColorFromElevation(elevation) {
+        const kelvin = elevationToKelvin(elevation);
+        const kelvinRgb = kelvinToRgb(kelvin);
+        if (elevation >= 0) {
+            return kelvinRgb;
         }
 
-        const rise = new Date(sunrise);
-        const set = new Date(sunset);
-        const totalDay = set - rise;
-        const elapsed = now - rise;
-        const progress = totalDay > 0 ? clamp(elapsed / totalDay, 0, 1) : 0.5;
+        const nightDepth = clamp(-elevation / 24, 0, 1);
+        return mixRgb(kelvinRgb, [12, 18, 44], 0.88 * nightDepth);
+    }
 
-        if (now < rise || now > set) {
-            const midnight = new Date(now);
-            midnight.setHours(0, 0, 0, 0);
-            const nightProgress = (now - midnight) / (24 * 60 * 60 * 1000);
-            return nightProgress < 0.5
-                ? interpolateColor(stops, nightProgress * 0.2)
-                : interpolateColor(stops, 0.8 + nightProgress * 0.2);
+    function skyGradientFromColor(baseRgb, elevation) {
+        let top = mixRgb(baseRgb, [255, 255, 255], 0.2);
+        let bottom = mixRgb(baseRgb, [0, 0, 0], 0.24);
+
+        if (elevation < -2) {
+            top = mixRgb(top, [26, 32, 62], 0.38);
+            bottom = mixRgb(bottom, [6, 8, 20], 0.55);
         }
 
-        return interpolateColor(stops, 0.2 + progress * 0.6);
+        return (
+            "linear-gradient(180deg, " +
+            rgbTupleToString(top) +
+            " 0%, " +
+            rgbTupleToString(baseRgb) +
+            " 54%, " +
+            rgbTupleToString(bottom) +
+            " 100%)"
+        );
     }
 
     function rgbTupleToString(rgb) {
@@ -228,12 +198,11 @@
         };
     }
 
-    function applyLocalColor(rgb) {
+    function applyLocalColor(rgb, elevation) {
         const root = document.documentElement;
         const palette = softTextPalette(rgb);
-        const bg = rgbTupleToString(rgb);
         const text = rgbTupleToString(palette.text);
-        root.style.setProperty("--bg", bg);
+        root.style.setProperty("--bg", skyGradientFromColor(rgb, elevation));
         root.style.setProperty("--text", text);
         root.style.setProperty("--muted", rgbTupleToString(palette.muted));
         root.style.setProperty("--border", rgbTupleToString(palette.border));
@@ -330,6 +299,7 @@
 
     async function refreshLocalTheme() {
         applyTheme("local");
+        const now = new Date();
 
         try {
             const liveLocation = await fetchLiveLocation();
@@ -340,20 +310,20 @@
         }
 
         if (!lastKnownLocation) {
-            const fallbackColor = getSkyColor(null, null, new Date());
-            applyLocalColor(fallbackColor);
+            const fallbackElevation = estimateElevationWithoutLocation(now);
+            const fallbackColor = skyColorFromElevation(fallbackElevation);
+            applyLocalColor(fallbackColor, fallbackElevation);
             updateControlButton();
             return;
         }
 
-        const now = new Date();
-        const sunTimes = getSunTimes(
+        const elevation = solarAltitudeDegrees(
             lastKnownLocation.lat,
             lastKnownLocation.lon,
             now,
         );
-        const skyColor = getSkyColor(sunTimes.sunrise, sunTimes.sunset, now);
-        applyLocalColor(skyColor);
+        const skyColor = skyColorFromElevation(elevation);
+        applyLocalColor(skyColor, elevation);
         updateControlButton();
     }
 
