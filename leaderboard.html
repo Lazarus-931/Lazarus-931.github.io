@@ -1,0 +1,263 @@
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/theme.css">
+<script src="assets/theme.js"></script>
+<title>MetalBench · Leaderboard</title>
+
+<style>
+article { max-width: 960px; margin: 0 auto; }
+h1 { font-size: 1.6em; margin-bottom: 0.1em; }
+.subtitle { color: var(--muted); margin-bottom: 1.5em; font-size: 0.9em; }
+.subtitle a { color: var(--muted); }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.88em; margin: 1em 0; }
+th, td { padding: 5px 10px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+th { position: sticky; top: 0; background: var(--bg); font-weight: normal; color: var(--muted); font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.05em; }
+
+.chip-tabs { margin: 0 0 1.5em 0; display: flex; gap: 0; flex-wrap: wrap; }
+.chip-tabs button {
+    background: none; border: 1px solid var(--border); color: var(--text);
+    padding: 5px 16px; cursor: pointer; font-family: inherit; font-size: 0.85em; margin-right: -1px;
+}
+.chip-tabs button:first-child { border-radius: 3px 0 0 3px; }
+.chip-tabs button:last-child { border-radius: 0 3px 3px 0; }
+.chip-tabs button.active { background: var(--text); color: var(--bg); }
+.chip-tabs button.empty { color: var(--muted); border-style: dashed; }
+
+#search { width: 100%; padding: 7px 10px; border: 1px solid var(--border);
+    background: var(--bg); color: var(--text); font-family: inherit; font-size: 0.9em;
+    margin-bottom: 1em; box-sizing: border-box; }
+
+.stats { display: flex; gap: 2em; margin: 1em 0; flex-wrap: wrap; }
+.stat { text-align: center; }
+.stat-val { font-size: 1.4em; font-weight: bold; }
+.stat-label { color: var(--muted); font-size: 0.8em; }
+
+.kernel-name a { color: var(--text); text-decoration: none; }
+.kernel-name a:hover { text-decoration: underline; }
+.score-link a { color: var(--text); text-decoration: none; font-weight: bold; }
+.score-link a:hover { text-decoration: underline; }
+
+.refresh-note { color: var(--muted); font-size: 0.75em; margin-left: 1em; }
+
+.scoring { margin-top: 2.5em; padding: 1em 1.2em; border: 1px solid var(--border);
+    border-radius: 4px; background: var(--bg); font-size: 0.85em; }
+.scoring h3 { margin-top: 0; font-size: 1em; }
+.scoring code { background: var(--border); padding: 1px 5px; border-radius: 2px; font-size: 0.9em; }
+
+footer { margin-top: 3em; color: var(--muted); font-size: 0.8em; border-top: 1px solid var(--border); padding-top: 1em; }
+</style>
+
+<article>
+<h1>MetalBench</h1>
+<div class="subtitle">
+    Apple Metal GPU kernel benchmarks &nbsp;·&nbsp;
+    <a href="https://github.com/Lazarus-931/MetalBench">repo</a> &nbsp;·&nbsp;
+    <a href="blogs/metalbench.md.html">blog</a>
+    <span class="refresh-note" id="refresh-note"></span>
+</div>
+
+<div class="chip-tabs" id="chip-tabs"></div>
+<div class="chip-tabs" id="set-tabs" style="margin-top:-1em"></div>
+
+<div class="stats" id="stats"></div>
+
+<input type="text" id="search" placeholder="Search..." oninput="render()">
+
+<div id="table"></div>
+
+<section class="scoring">
+    <h3>How scoring works</h3>
+    <p>Each kernel is benchmarked against its MLX baseline on the same chip, same input shapes,
+       across 200 iterations after warmup. Three numbers go in:</p>
+    <ul>
+        <li><strong>Speedup</strong> = MLX median time / Metal kernel median time. Greater than 1.0 means the kernel beats MLX.</li>
+        <li><strong>Stability</strong> = 1 − (max − min) / median across iterations. 1.0 means perfectly consistent runs.</li>
+    </ul>
+    <p>The composite <strong>score</strong> shown on the right side of each row combines them as:</p>
+    <pre>score = 0.8 × speedup + 0.2 × stability</pre>
+    <p>Click a <strong>kernel name</strong> to view the MLX baseline; click the <strong>score</strong>
+       to view the Metal source.</p>
+</section>
+
+<footer>
+    Refreshes every hour from <a href="https://github.com/Lazarus-931/MetalBench">repo</a> results.md files.
+    M-chip variants are not split further — M2 covers M2/M2 Pro/M2 Max, etc.
+</footer>
+</article>
+
+<script>
+const CHIPS = {
+    "apple-m1": { label: "Apple M1", data: false },
+    "apple-m2": { label: "Apple M2", data: true },
+    "apple-m3": { label: "Apple M3", data: false },
+    "apple-m4": { label: "Apple M4", data: true },
+    "apple-m5": { label: "Apple M5", data: false },
+};
+
+const GH = "https://github.com/Lazarus-931/MetalBench/blob/main";
+const GH_RAW = "https://raw.githubusercontent.com/Lazarus-931/MetalBench/main";
+
+// Format per row: [metal_ms, speedup, gflops, gb_s, stability]
+const FALLBACK = {
+"apple-m2":{"sqr_mm":[1.1309,1.18,1899,11,0.94],"rect_mm":[9.5034,0.83,1808,6,0.98],"batch_mm":[2.6931,0.91,1595,44,0.97],"relu":[0.0195,9.97,13,107,0.88],"sigmoid":[0.0199,12.24,53,106,1.0],"swish":[0.0199,12.59,66,106,1.0],"leaky_relu":[0.0198,12.86,40,106,1.0],"layer_norm":[0.1398,57.23,38,60,0.99],"gelu":[0.02,12.84,66,105,1.0],"selu":[0.0198,12.11,66,106,1.0],"logsigmoid":[0.0207,13.52,63,101,1.0],"hardsigmoid":[0.0197,14.84,40,106,1.0],"rms_norm":[0.1226,65.26,43,68,0.99],"l1_norm":[0.0785,101.91,27,53,0.99],"l2_norm":[0.0818,97.82,38,51,0.99],"cumsum":[0.1218,65.66,9,69,0.97],"cumprod":[0.1254,63.78,8,67,0.97],"cumsum_reverse":[0.1208,66.22,17,69,0.98],"mse_loss":[0.2337,2.87,13,54,0.92],"matvec":[0.0596,4.07,35,70,0.54],"transpose_2d":[0.2253,0.07,0,74,1.0],"outer_product":[0.2229,1.74,9,38,0.91],"matrix_add":[0.148,2.39,7,85,0.97],"dot_product":[0.0143,15.83,2,9,1.0],"matrix_scale":[0.0831,96.22,13,101,0.99],"softmax":[0.0881,2.88,59,95,0.74],"tanh":[0.0197,13.36,53,107,1.0],"hardswish":[0.0198,15.05,53,106,1.0],"cosine_similarity":[0.108,74.02,49,78,1.0],"manhattan_similarity":[0.1108,72.21,19,76,0.98],"add_norm":[0.1644,2.9,45,77,0.97],"silu_linear":[1.1558,6.92,1861,11,1.0],"conv2d":[281.1481,0.01,16,0,1.0],"exp":[0.0194,11.85,14,108,0.72],"abs":[0.0192,9.91,14,109,0.77],"clip":[0.0104,20.03,51,202,0.57],"batch_norm":[0.0679,7.0,31,31,0.58],"elu":[0.0199,15.74,66,106,0.99],"mish":[0.0212,13.42,99,99,0.78],"softplus":[0.0199,12.37,53,105,0.91],"prelu":[0.0133,18.05,59,162,0.66],"argmax":[0.0911,4.71,12,46,0.87],"variance":[0.0593,6.94,53,71,0.66],"rope_embedding":[0.005,1600.17,5,13,1.0],"swiglu":[0.2514,1.13,268,4,0.81],"softmax_attention":[0.0851,2.73,50,2,0.88],"residual_add":[0.14,2.8,15,90,0.98],"dropout":[0.1422,3.13,15,88,0.98],"instance_norm":[0.0437,9.29,96,96,0.61],"group_norm":[0.0574,51.0,73,73,0.95],"cross_entropy_loss":[0.1406,3.35,45,60,0.76],"log_softmax":[0.1115,2.63,47,75,0.81],"masked_softmax":[0.147,2.8,43,86,0.84],"bias_add":[0.0617,4.67,17,136,0.94],"fused_add_rms_norm":[0.1359,3.28,46,93,0.85],"linear_bias":[0.1243,1.96,270,6,1.0],"bias_gelu":[0.0711,5.28,88,118,0.93],"fused_qkv_projection":[0.091,1.97,277,8,0.71],"attention_scores":[0.0616,3.17,35,2,0.66],"nll_loss":[0.0724,5.5,29,116,0.71],"log_softmax_cross_entropy":[0.1403,3.29,45,60,0.71],"gelu_linear":[1.1477,1.74,1876,11,0.95],"rms_norm_linear":[1.3645,1.13,1578,9,1.0]},
+"apple-m4":{"abs":[0.0179,17.84,15,117,0.99],"argmax":[0.0399,7.2,26,105,0.76],"batch_mm":[2.338,0.72,1837,50,0.99],"batch_norm":[0.0499,6.64,42,42,0.87],"clip":[0.0164,14.18,32,128,0.99],"conv2d":[64.2994,0.03,71,0,0.99],"cosine_similarity":[0.0685,10.59,77,123,0.93],"cumprod":[0.0496,5.76,21,169,0.96],"cumsum":[0.0506,5.72,21,166,0.89],"cumsum_reverse":[0.0576,6.16,36,146,0.89],"dot_product":[0.0075,22.44,4,17,0.85],"elu":[0.0118,20.74,111,178,0.81],"exp":[0.0164,13.33,16,128,1.0],"gelu":[0.0118,20.13,111,178,0.91],"hardsigmoid":[0.0118,21.22,67,178,0.83],"hardswish":[0.0116,22.3,90,180,0.81],"l1_norm":[0.0331,9.68,63,127,0.92],"l2_norm":[0.036,9.08,87,117,0.91],"layer_norm":[0.0559,5.23,94,150,0.83],"leaky_relu":[0.0117,22.49,67,180,0.88],"logsigmoid":[0.0119,17.76,110,177,0.82],"manhattan_similarity":[0.0681,6.64,31,123,0.93],"matrix_add":[0.1211,3.12,9,104,0.99],"matrix_scale":[0.042,6.11,25,200,1.0],"matvec":[0.0334,7.37,63,126,0.91],"mish":[0.012,21.43,175,175,0.8],"mse_loss":[0.1508,3.34,21,83,0.92],"outer_product":[0.1032,2.82,20,81,0.94],"prelu":[0.0171,14.57,46,126,0.92],"rect_mm":[6.1376,0.92,2799,10,1.0],"relu":[0.0171,13.01,15,122,0.88],"rms_norm":[0.054,5.38,97,155,0.86],"selu":[0.0167,12.36,78,126,0.91],"sigmoid":[0.0119,17.78,88,177,0.8],"softplus":[0.0118,19.87,89,177,0.82],"sqr_mm":[0.7138,1.39,3008,18,0.99],"swish":[0.0118,20.19,111,177,0.81],"tanh":[0.0141,14.77,74,148,0.96],"transpose_2d":[0.1769,0.12,0,95,0.95],"variance":[0.0362,11.06,87,116,0.84],"add_norm":[0.1187,3.7,62,106,0.98],"attention_scores":[0.0321,6.4,68,4,0.73],"bias_add":[0.0467,6.16,22,180,0.9],"bias_gelu":[0.0469,7.79,134,179,0.96],"dropout":[0.1179,3.7,18,107,0.99],"fused_add_rms_norm":[0.1197,3.61,53,105,0.98],"fused_qkv_projection":[0.0454,5.1,554,17,0.81],"gelu_linear":[0.719,1.5,2994,18,0.99],"group_norm":[0.0318,11.58,132,132,0.93],"instance_norm":[0.0475,7.68,88,88,0.77],"linear_bias":[0.0582,4.23,578,14,0.81],"nll_loss":[0.0679,5.89,31,124,0.97],"residual_add":[0.1217,3.52,17,103,0.95],"rms_norm_linear":[0.9038,1.36,2382,14,1.0],"rope_embedding":[0.003,83.97,8,22,0.79],"silu_linear":[0.7078,1.48,3039,18,0.98],"softmax_attention":[0.0394,5.96,109,3,0.75],"swiglu":[0.1774,1.58,380,6,0.91],"softmax":[0.0907,3.91,58,92,0.98]}};
+
+let DATA = {};
+let chip = "apple-m2";
+let lastRefresh = null;
+
+const STANDARD_KERNELS = new Set([
+    "add_norm","silu_linear","gelu_linear","rms_norm_linear","scaled_dot_product",
+    "rope_embedding","swiglu","softmax_attention","residual_add",
+    "dropout","instance_norm","group_norm","cross_entropy_loss","log_softmax",
+    "masked_softmax","bias_add","fused_add_rms_norm","linear_bias","bias_gelu",
+    "fused_qkv_projection","attention_scores","nll_loss",
+    "log_softmax_cross_entropy",
+]);
+const FULL_KERNELS = new Set(["transformer_block","llama_attention","conv_block","mbconv"]);
+const setOf = n => STANDARD_KERNELS.has(n) ? "standard"
+                 : FULL_KERNELS.has(n)     ? "full"
+                 : "common";
+
+const SETS = {
+    "common":   { label: "Common" },
+    "standard": { label: "Standard" },
+    "full":     { label: "Full" },
+};
+let setFilter = "common";
+
+function score(v) {
+    const [ms, sp, gf, gb, st] = v;
+    return 0.8 * sp + 0.2 * (st || 0.99);
+}
+
+async function refreshData(chipId) {
+    if (!CHIPS[chipId] || !CHIPS[chipId].data) { DATA[chipId] = {}; return; }
+    try {
+        const resp = await fetch(`${GH_RAW}/results/${chipId}/results.md?t=${Date.now()}`);
+        if (!resp.ok) throw new Error('not found');
+        const text = await resp.text();
+        const parsed = {};
+        for (const line of text.split('\n')) {
+            const m = line.match(/^\|\s*(\S+)\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)×\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)\s*\|/);
+            if (m) parsed[m[1]] = [parseFloat(m[2]), parseFloat(m[3]), parseFloat(m[4]), parseFloat(m[5]), 0.99];
+        }
+        if (Object.keys(parsed).length > 0) {
+            DATA[chipId] = parsed;
+            lastRefresh = new Date();
+            document.getElementById('refresh-note').textContent = `(live, updated ${lastRefresh.toLocaleTimeString()})`;
+            return;
+        }
+    } catch(e) {}
+    if (FALLBACK[chipId]) {
+        DATA[chipId] = FALLBACK[chipId];
+        document.getElementById('refresh-note').textContent = '(using embedded data — push results.md to repo for live updates)';
+    }
+}
+
+function render() {
+    const f = (document.getElementById('search').value || '').toLowerCase();
+    const data = DATA[chip] || {};
+
+    if (Object.keys(data).length === 0 && CHIPS[chip] && !CHIPS[chip].data) {
+        document.getElementById('table').innerHTML = `<p style="color:var(--muted);margin:2em 0">
+            No results yet for ${CHIPS[chip].label}.<br>
+            <a href="${GH}/results/${chip}/">Submit results →</a></p>`;
+        document.getElementById('stats').innerHTML = '';
+        return;
+    }
+    if (setFilter === "full") {
+        document.getElementById('table').innerHTML = `<p style="color:var(--muted);margin:2em 0">
+            Full Set kernels (transformer_block, llama_attention, mbconv, conv_block)
+            are planned but not yet benchmarked.</p>`;
+        document.getElementById('stats').innerHTML = '';
+        return;
+    }
+    if (Object.keys(data).length === 0) {
+        document.getElementById('table').innerHTML = '<p style="color:var(--muted)">Loading...</p>';
+        document.getElementById('stats').innerHTML = '';
+        return;
+    }
+
+    const rows = [];
+    for (const [n, v] of Object.entries(data)) {
+        if (n === 'trace') continue;
+        if (setOf(n) !== setFilter) continue;
+        if (f && !n.includes(f)) continue;
+        rows.push({name:n, v, sc: score(v)});
+    }
+    rows.sort((a,b) => b.sc - a.sc);
+
+    let h = '<table><tr><th>kernel</th><th>metal (ms)</th><th>mlx (ms)</th><th>speedup</th><th>score</th></tr>';
+    for (const r of rows) {
+        const [ms, sp] = r.v;
+        const mlxMs = sp > 0 ? ms * sp : 0;
+        const set = setOf(r.name);
+        h += `<tr>
+            <td class="kernel-name"><a href="${GH}/mlx/kernels/${set}/${r.name}.py" target="_blank">${r.name}</a></td>
+            <td>${ms.toFixed(3)}</td>
+            <td>${mlxMs>0?mlxMs.toFixed(3):"—"}</td>
+            <td>${sp.toFixed(1)}×</td>
+            <td class="score-link"><a href="${GH}/src/kernels/${set}/${r.name}.metal" target="_blank">${r.sc.toFixed(2)}</a></td>
+        </tr>`;
+    }
+    h += '</table>';
+    document.getElementById('table').innerHTML = h;
+
+    const total = rows.length;
+    const beating = rows.filter(r => r.v[1] >= 1).length;
+    document.getElementById('stats').innerHTML = `
+        <div class="stat"><div class="stat-val">${total}</div><div class="stat-label">kernels</div></div>
+        <div class="stat"><div class="stat-val">${beating}</div><div class="stat-label">≥1× MLX</div></div>
+        <div class="stat"><div class="stat-val">${rows.length>0 ? rows[0].name : '—'}</div><div class="stat-label">top kernel</div></div>`;
+}
+
+async function showChip(id) {
+    chip = id;
+    updateTabs();
+    if (!DATA[id] || Object.keys(DATA[id]).length === 0) {
+        document.getElementById('table').innerHTML = '<p style="color:var(--muted)">Loading...</p>';
+        await refreshData(id);
+    }
+    render();
+}
+
+function showSet(s) {
+    setFilter = s;
+    document.querySelectorAll('#set-tabs button').forEach(b => b.classList.remove('active'));
+    const el = document.getElementById('set-' + s);
+    if (el) el.classList.add('active');
+    render();
+}
+window.showSet = showSet;
+
+(async function() {
+    let tabs = '';
+    for (const [key, info] of Object.entries(CHIPS)) {
+        const cls = info.data ? '' : ' class="empty"';
+        tabs += `<button${cls} onclick="showChip('${key}')" id="tab-${key}">${info.label}</button>`;
+    }
+    document.getElementById('chip-tabs').innerHTML = tabs;
+
+    let setTabs = '';
+    for (const [key, info] of Object.entries(SETS)) {
+        setTabs += `<button onclick="showSet('${key}')" id="set-${key}">${info.label}</button>`;
+    }
+    document.getElementById('set-tabs').innerHTML = setTabs;
+    document.getElementById('set-' + setFilter).classList.add('active');
+
+    await refreshData('apple-m2');
+    await refreshData('apple-m4');
+
+    updateTabs();
+    render();
+
+    setInterval(async () => { await refreshData(chip); render(); }, 3600000);
+})();
+
+function updateTabs() {
+    document.querySelectorAll('.chip-tabs button').forEach(b => b.classList.remove('active'));
+    const el = document.getElementById('tab-' + chip);
+    if (el) el.classList.add('active');
+}
+</script>
