@@ -208,8 +208,7 @@ function render() {
     const beating = rows.filter(r => r.v[1] >= 1).length;
     document.getElementById('stats').innerHTML = `
         <div class="stat"><div class="stat-val">${total}</div><div class="stat-label">kernels</div></div>
-        <div class="stat"><div class="stat-val">${beating}</div><div class="stat-label">≥1× MLX</div></div>
-        <div class="stat"><div class="stat-val">${rows.length>0 ? rows[0].name : '—'}</div><div class="stat-label">top kernel</div></div>`;
+        <div class="stat"><div class="stat-val">${beating}</div><div class="stat-label">≥1× MLX</div></div>`;
 }
 
 async function showChip(id) {
