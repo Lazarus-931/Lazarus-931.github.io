@@ -22,6 +22,7 @@ th { position: sticky; top: 0; background: var(--bg); font-weight: normal; color
 .chip-tabs button:last-child { border-radius: 0 3px 3px 0; }
 .chip-tabs button.active { background: var(--text); color: var(--bg); }
 .chip-tabs button.empty { color: var(--muted); border-style: dashed; }
+.chip-tabs button.empty.active { background: transparent; color: var(--text); border-style: dashed; }
 
 #search { width: 100%; padding: 7px 10px; border: 1px solid var(--border);
     background: var(--bg); color: var(--text); font-family: inherit; font-size: 0.9em;
@@ -51,8 +52,7 @@ footer { margin-top: 3em; color: var(--muted); font-size: 0.8em; border-top: 1px
 <h1>MetalBench</h1>
 <div class="subtitle">
     Apple Metal GPU kernel benchmarks &nbsp;·&nbsp;
-    <a href="https://github.com/Lazarus-931/MetalBench">repo</a> &nbsp;·&nbsp;
-    <a href="blogs/metalbench.md.html">blog</a>
+    <a href="https://github.com/Lazarus-931/MetalBench">repo</a>
     <span class="refresh-note" id="refresh-note"></span>
 </div>
 

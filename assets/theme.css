@@ -20,21 +20,12 @@
 
 :root[data-theme="dark"] {
     color-scheme: dark;
-    --bg: #000000;
-    --text: #ffffff;
-    --muted: #ffffff;
-    --border: #ffffff;
-    --tooltip-bg: #000000;
-    --tooltip-text: #ffffff;
-}
-
-:root[data-theme="local"] {
-    --bg: #ffffff;
-    --text: #000000;
-    --muted: #000000;
-    --border: #000000;
-    --tooltip-bg: #ffffff;
-    --tooltip-text: #000000;
+    --bg: #1c1b1a;
+    --text: #e8e3d8;
+    --muted: #9c958a;
+    --border: #3b3935;
+    --tooltip-bg: #282725;
+    --tooltip-text: #e8e3d8;
 }
 
 html,
