@@ -34,6 +34,8 @@ th { position: sticky; top: 0; background: var(--bg); font-weight: normal; color
 .stat-label { color: var(--muted); font-size: 0.8em; }
 
 .kernel-name a { color: var(--text); text-decoration: none; }
+tr.unbenched { opacity: 0.4; }
+tr.unbenched td { color: var(--muted); }
 .kernel-name a:hover { text-decoration: underline; }
 .score-link a { color: var(--text); text-decoration: none; font-weight: bold; }
 .score-link a:hover { text-decoration: underline; }
@@ -180,38 +182,46 @@ function render() {
         document.getElementById('stats').innerHTML = '';
         return;
     }
-    if (setFilter === "full") {
-        document.getElementById('table').innerHTML = `<p style="color:var(--muted);margin:2em 0">
-            Full Set kernels (transformer_block, llama_attention, mbconv, conv_block)
-            are planned but not yet benchmarked.</p>`;
-        document.getElementById('stats').innerHTML = '';
-        return;
-    }
-    if (Object.keys(data).length === 0) {
+    // Canonical kernel list comes from SET_OF (populated by refreshLinks from LINK.md).
+    // Iterate over the full 105-kernel canon so unbenched kernels still appear with "—".
+    const canon = Object.keys(SET_OF);
+    if (canon.length === 0) {
         document.getElementById('table').innerHTML = '<p style="color:var(--muted)">Loading...</p>';
         document.getElementById('stats').innerHTML = '';
         return;
     }
 
     const rows = [];
-    for (const [n, v] of Object.entries(data)) {
-        if (n === 'trace') continue;
+    for (const n of canon) {
         if (setFilter !== "all" && setOf(n) !== setFilter) continue;
         if (f && !n.includes(f)) continue;
-        rows.push({name:n, v, sc: score(v)});
+        const v = data[n];  // may be undefined if unbenched on this chip
+        rows.push({name: n, v, sc: v ? score(v) : -1});
     }
-    rows.sort((a,b) => b.sc - a.sc);
+    // Sort: benched (sc >= 0) descending by score; unbenched (sc = -1) at the bottom alphabetically.
+    rows.sort((a, b) => {
+        if (a.sc < 0 && b.sc < 0) return a.name.localeCompare(b.name);
+        if (a.sc < 0) return 1;
+        if (b.sc < 0) return -1;
+        return b.sc - a.sc;
+    });
 
     let h = '<table><tr><th>kernel</th><th>metal (ms)</th><th>mlx (ms)</th><th>speedup</th><th>score</th></tr>';
     const chipLinks = LINKS[chip] || {};
     for (const r of rows) {
+        const set = setOf(r.name);
+        const metalUrl = chipLinks[r.name] || `${GH}/mlx/kernels/${set}/${r.name}.py`;
+        const scoreUrl = chipLinks[r.name] || `${GH}/metal/kernels/${set}/${r.name}.metal`;
+        if (!r.v) {
+            // Unbenched on this chip — show name + dashes.
+            h += `<tr class="unbenched">
+                <td class="kernel-name"><a href="${metalUrl}" target="_blank">${r.name}</a></td>
+                <td>—</td><td>—</td><td>—</td><td>—</td>
+            </tr>`;
+            continue;
+        }
         const [ms, sp] = r.v;
         const mlxMs = sp > 0 ? ms * sp : 0;
-        const set = setOf(r.name);
-        // Kernel name → metal source via LINK.md (chip-specific); fall back to mlx ref.
-        const metalUrl = chipLinks[r.name] || `${GH}/mlx/kernels/${set}/${r.name}.py`;
-        // Score → metal source on disk (fallback for direct file link).
-        const scoreUrl = chipLinks[r.name] || `${GH}/metal/kernels/${set}/${r.name}.metal`;
         h += `<tr>
             <td class="kernel-name"><a href="${metalUrl}" target="_blank">${r.name}</a></td>
             <td>${ms.toFixed(3)}</td>
@@ -224,9 +234,11 @@ function render() {
     document.getElementById('table').innerHTML = h;
 
     const total = rows.length;
-    const beating = rows.filter(r => r.v[1] >= 1).length;
+    const benched = rows.filter(r => r.v).length;
+    const beating = rows.filter(r => r.v && r.v[1] >= 1).length;
     document.getElementById('stats').innerHTML = `
         <div class="stat"><div class="stat-val">${total}</div><div class="stat-label">kernels</div></div>
+        <div class="stat"><div class="stat-val">${benched}</div><div class="stat-label">benched</div></div>
         <div class="stat"><div class="stat-val">${beating}</div><div class="stat-label">≥1× MLX</div></div>`;
 }
 
