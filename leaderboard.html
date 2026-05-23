@@ -123,6 +123,7 @@ const SETS = {
     "common":   { label: "Common" },
     "standard": { label: "Standard" },
     "full":     { label: "Full" },
+    "all":      { label: "All" },
 };
 let setFilter = "common";
 
@@ -182,7 +183,7 @@ function render() {
     const rows = [];
     for (const [n, v] of Object.entries(data)) {
         if (n === 'trace') continue;
-        if (setOf(n) !== setFilter) continue;
+        if (setFilter !== "all" && setOf(n) !== setFilter) continue;
         if (f && !n.includes(f)) continue;
         rows.push({name:n, v, sc: score(v)});
     }
