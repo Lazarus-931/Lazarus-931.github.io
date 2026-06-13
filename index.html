@@ -14,6 +14,67 @@
     margin-top: 5px;
     color: var(--muted);
 }
+
+/* keyboard hints next to nav links: [w] [r] [l] */
+.keyhint {
+    font-family: "Courier New", monospace;
+    font-size: 0.82em;
+    color: var(--muted);
+    text-decoration: none;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+.keyhint::before { content: "["; }
+.keyhint::after  { content: "]"; }
+.keyhint:hover { color: var(--text); }
+
+/* [shift] socials dropdown */
+.socials {
+    position: relative;
+    display: inline-block;
+    margin-top: 0.4em;
+}
+.socials-trigger {
+    font-family: "Courier New", monospace;
+    font-size: 0.85em;
+    color: var(--muted);
+    cursor: pointer;
+    user-select: none;
+}
+.socials-trigger:hover { color: var(--text); }
+.socials-menu {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 1.7em;
+    min-width: 150px;
+    background: var(--tooltip-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px 0;
+    z-index: 9998;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+}
+.socials.open .socials-menu { display: block; }
+.socials-menu a {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 4px 12px;
+    text-decoration: none;
+    color: var(--text);
+}
+.socials-menu a:hover { background: var(--bg); }
+.socials-menu .sk {
+    font-family: "Courier New", monospace;
+    font-size: 0.78em;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0 5px;
+    min-width: 1.5em;
+    text-align: center;
+}
 </style>
 
 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
@@ -53,17 +114,61 @@ Reach me at [first] + [lastname] + [b] @ [gmail] . com, or also book <a href="#"
 </div>
 </div>
 
-[CV (April 2026)](https://lazarus-931.github.io/cv.pdf.html)
+[CV (April 2026)](cv.pdf.html)
 
-[Writings](https://lazarus-931.github.io/writings.md.html)
+[Writings](writings.md.html) <a class="keyhint" data-key="w" href="writings.md.html">w</a>
 
-[Readings](https://lazarus-931.github.io/blogs/readings.md.html)
+[Readings](notes/readings.md.html) <a class="keyhint" data-key="r" href="notes/readings.md.html">r</a>
 
-[Links](https://lazarus-931.github.io/blogs/links.md.html)
+[Links](notes/links.md.html) <a class="keyhint" data-key="l" href="notes/links.md.html">l</a>
 
-[X](https://x.com/alaxarr)
+<div class="socials" id="socials">
+<span class="socials-trigger" id="socialsTrigger">[shift] socials</span>
+<div class="socials-menu" id="socialsMenu">
+<a href="https://x.com/alaxarr" target="_blank" rel="noopener" data-key="x"><span class="sk">X</span> x</a>
+<a href="https://www.linkedin.com/in/alazer-manakelew1/" target="_blank" rel="noopener" data-key="L"><span class="sk">L</span> linkedin</a>
+<a href="https://github.com/Lazarus-931" target="_blank" rel="noopener" data-key="G"><span class="sk">G</span> github</a>
+</div>
+</div>
 
-[LinkedIn](https://www.linkedin.com/in/alazer-manakelew1/)
+<script>
+(function () {
+    function isTyping(t) {
+        return t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable);
+    }
+    var NAV = {
+        KeyW: "writings.md.html",
+        KeyR: "notes/readings.md.html",
+        KeyL: "notes/links.md.html"
+    };
+    var SOCIAL = {
+        KeyX: "https://x.com/alaxarr",
+        KeyL: "https://www.linkedin.com/in/alazer-manakelew1/",
+        KeyG: "https://github.com/Lazarus-931"
+    };
+    function socials() { return document.getElementById("socials"); }
+    function setOpen(on) { var s = socials(); if (s) s.classList.toggle("open", on); }
+
+    document.addEventListener("keydown", function (e) {
+        if (isTyping(e.target) || e.metaKey || e.ctrlKey || e.altKey) return;
+        if (e.key === "Shift") { setOpen(true); return; }       // hold shift -> show socials
+        if (e.shiftKey) {                                        // shift + letter -> open social
+            if (SOCIAL[e.code]) { e.preventDefault(); window.open(SOCIAL[e.code], "_blank", "noopener"); }
+            return;
+        }
+        if (NAV[e.code]) { e.preventDefault(); window.location.href = NAV[e.code]; }  // w/r/l -> nav
+    });
+    document.addEventListener("keyup", function (e) { if (e.key === "Shift") setOpen(false); });
+    window.addEventListener("blur", function () { setOpen(false); });
+
+    // click [shift] label to toggle the menu (mouse/touch fallback)
+    document.addEventListener("click", function (e) {
+        var trigger = e.target.closest && e.target.closest("#socialsTrigger");
+        if (trigger) { e.preventDefault(); var s = socials(); if (s) s.classList.toggle("open"); return; }
+        if (!(e.target.closest && e.target.closest("#socials"))) setOpen(false);
+    });
+})();
+</script>
 
 <!-- Cal popup embed code begins -->
 <script type="text/javascript">

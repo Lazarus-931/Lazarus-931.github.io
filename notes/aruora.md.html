@@ -11,25 +11,25 @@ article {
     line-height: 1.6;
 }
 
-.blog-title {
+.note-title {
     font-size: 2em;
     font-weight: normal;
     margin-bottom: 0.3em;
     text-align: center;
 }
 
-.blog-date {
+.note-date {
     text-align: center;
     color: var(--muted);
     font-size: 0.9em;
     margin-bottom: 3em;
 }
 
-.blog-content {
+.note-content {
     color: var(--text);
 }
 
-.blog-content p {
+.note-content p {
     margin-bottom: 1.5em;
 }
 
@@ -151,10 +151,10 @@ table.summary td:first-child {
 
 <article>
 
-<div class="blog-title">Exploring Aurora's Hyperparameters</div>
-<div class="blog-date">May 21, 2026</div>
+<div class="note-title">Exploring Aurora's Hyperparameters</div>
+<div class="note-date">May 21, 2026</div>
 
-<div class="blog-content">
+<div class="note-content">
 
 **TL;DR**
 
@@ -183,7 +183,7 @@ Dataset: **Tiny Shakespeare** (char-level, vocab=65, ctx=256).
 Four model sizes (14M, 50M, 100M, 300M actual params), ten log-spaced learning rates from `0.005` to `0.32` (a 64× range), `n_steps=200` each. Everything else fixed at Aurora's defaults: `wd=0.025`, `pp_beta=0.5`.
 
 <figure>
-  <img src="../assets/blog_images/aruora/img_1.png" alt="Aurora loss trajectories per lr per model size">
+  <img src="../assets/note_images/aruora/img_1.png" alt="Aurora loss trajectories per lr per model size">
   <figcaption><strong>Fig 1.</strong> Loss vs step, four panels (14M / 50M / 100M / 300M). Within each panel, one colored line per learning rate (10 total, viridis-colored).</figcaption>
 </figure>
 
@@ -227,12 +227,12 @@ Three separate 10-run sweeps at 14M (d=384, L=6), `n_steps=300`. Within each swe
 Ten log-spaced values from `0.005` to `0.3` (with `0.05` being the default).
 
 <figure>
-  <img src="../assets/blog_images/aruora/η_sweep.png" alt="Loss trajectories per η">
+  <img src="../assets/note_images/aruora/η_sweep.png" alt="Loss trajectories per η">
   <figcaption><strong>Fig 2.</strong> Loss vs step, one curve per η. The default η=0.05 converges to a much higher floor than the small-η runs.</figcaption>
 </figure>
 
 <figure>
-  <img src="../assets/blog_images/aruora/final_η.png" alt="Final loss vs η">
+  <img src="../assets/note_images/aruora/final_η.png" alt="Final loss vs η">
   <figcaption><strong>Fig 3.</strong> Final loss at step 300 vs η. Dashed vertical = default (0.05). The minimum lives near η ≈ 0.02; loss bottoms out and then climbs sharply past η ≈ 0.1.</figcaption>
 </figure>
 
@@ -244,12 +244,12 @@ Ten log-spaced values from `0.005` to `0.3` (with `0.05` being the default).
 Ten values from `0` to `0.25` (default `0.025`). η held at 0.02, pp_beta at 0.5.
 
 <figure>
-  <img src="../assets/blog_images/aruora/decay.png" alt="Loss trajectories per weight_decay (placeholder)">
+  <img src="../assets/note_images/aruora/decay.png" alt="Loss trajectories per weight_decay (placeholder)">
   <figcaption><strong>Fig 4.</strong> Loss vs step, one curve per <code>weight_decay</code>. <em>(Asset not yet uploaded — placeholder.)</em></figcaption>
 </figure>
 
 <figure>
-  <img src="../assets/blog_images/aruora/final_decay.png" alt="Final loss vs weight_decay (placeholder)">
+  <img src="../assets/note_images/aruora/final_decay.png" alt="Final loss vs weight_decay (placeholder)">
   <figcaption><strong>Fig 5.</strong> Final loss vs <code>weight_decay</code>. <em>(Placeholder.)</em></figcaption>
 </figure>
 
@@ -272,12 +272,12 @@ for k in range(pp_iterations):
 `pp_beta=1` is full correction between passes; `0.5` is a damped half-step (default); `pp_beta → 0` decouples the iterations entirely.
 
 <figure>
-  <img src="../assets/blog_images/aruora/pp_sweep.png" alt="Loss trajectories per pp_beta (placeholder)">
+  <img src="../assets/note_images/aruora/pp_sweep.png" alt="Loss trajectories per pp_beta (placeholder)">
   <figcaption><strong>Fig 6.</strong> Loss vs step, one curve per <code>pp_beta</code>. <em>(Asset not yet uploaded.)</em></figcaption>
 </figure>
 
 <figure>
-  <img src="../assets/blog_images/aruora/final_pp_sweep.png" alt="Final loss vs pp_beta (placeholder)">
+  <img src="../assets/note_images/aruora/final_pp_sweep.png" alt="Final loss vs pp_beta (placeholder)">
   <figcaption><strong>Fig 7.</strong> Final loss vs <code>pp_beta</code>. <em>(Placeholder.)</em></figcaption>
 </figure>
 
@@ -290,7 +290,7 @@ The lowest final loss in the sweep lands at **`pp_beta = 0.2`**, below the defau
 Two runs per size — `default` (η=0.05, wd=0.025, pp_beta=0.5) vs `tuned` which consists of (η=0.01, wd=0.025, pp_beta=0.2).
 
 <figure>
-  <img src="../assets/blog_images/aruora/default_vs_tuned.png" alt="Default vs tuned loss across 4 sizes">
+  <img src="../assets/note_images/aruora/default_vs_tuned.png" alt="Default vs tuned loss across 4 sizes">
   <figcaption><strong>Fig 8.</strong> Loss vs step, four panels (30M, 60M, 100M, 300M). Blue = published defaults, red = tuned triplet. </figcaption>
 </figure>
 
@@ -309,8 +309,8 @@ If you found this interesting feel free to cite.
   title        = {Exploring Aurora's Hyperparameters},
   year         = {2026},
   month        = may,
-  howpublished = {\url{https://lazarus-931.github.io/blogs/aruora.md.html}},
-  note         = {Blog post}
+  howpublished = {\url{https://lazarus-931.github.io/notes/aruora.md.html}},
+  note         = {note post}
 }</pre>
 </div>
 
