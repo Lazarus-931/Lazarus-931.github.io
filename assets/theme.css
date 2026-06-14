@@ -51,6 +51,9 @@ html {
 /* transparent so the full-viewport grid shows through the content column too */
 body {
     background-color: transparent;
+    /* Times has no medium weight; thicken glyph strokes slightly so text
+       reads heavier/crisper over the grid without going full bold */
+    -webkit-text-stroke: 0.3px currentColor;
 }
 
 a {
