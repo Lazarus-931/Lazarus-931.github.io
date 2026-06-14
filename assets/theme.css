@@ -38,12 +38,19 @@ body {
     font-family: "Times New Roman", Times, serif;
 }
 
-body {
+/* grid lives on <html> so it fills the whole viewport, not just the
+   centered Markdeep content column */
+html {
     background-image:
         linear-gradient(to right, var(--grid) 1px, transparent 1px),
         linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
     background-size: 32px 32px;
     background-attachment: fixed;
+}
+
+/* transparent so the full-viewport grid shows through the content column too */
+body {
+    background-color: transparent;
 }
 
 a {
