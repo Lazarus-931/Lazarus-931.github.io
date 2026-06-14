@@ -1,7 +1,7 @@
 :root {
     color-scheme: light;
     --bg: #f2e9d8;
-    --text: #2a2118;
+    --text: #15100a;
     --muted: #6b5d49;
     --border: #b9a98d;
     --tooltip-bg: #faf4e6;
@@ -12,7 +12,7 @@
 :root[data-theme="white"] {
     color-scheme: light;
     --bg: #f2e9d8;
-    --text: #2a2118;
+    --text: #15100a;
     --muted: #6b5d49;
     --border: #b9a98d;
     --tooltip-bg: #faf4e6;
@@ -23,7 +23,7 @@
 :root[data-theme="dark"] {
     color-scheme: dark;
     --bg: #1c1b1a;
-    --text: #e8e3d8;
+    --text: #f2efe6;
     --muted: #9c958a;
     --border: #3b3935;
     --tooltip-bg: #282725;
@@ -44,7 +44,7 @@ html {
     background-image:
         linear-gradient(to right, var(--grid) 1px, transparent 1px),
         linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
-    background-size: 32px 32px;
+    background-size: 22px 22px;
     background-attachment: fixed;
 }
 
