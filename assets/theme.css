@@ -6,7 +6,7 @@
     --border: #b9a98d;
     --tooltip-bg: #faf4e6;
     --tooltip-text: #2a2118;
-    --grid: rgba(123, 106, 77, 0.35);
+    --grid: rgba(123, 106, 77, 0.18);
 }
 
 :root[data-theme="white"] {
@@ -17,7 +17,7 @@
     --border: #b9a98d;
     --tooltip-bg: #faf4e6;
     --tooltip-text: #2a2118;
-    --grid: rgba(123, 106, 77, 0.35);
+    --grid: rgba(123, 106, 77, 0.18);
 }
 
 :root[data-theme="dark"] {
@@ -28,7 +28,7 @@
     --border: #3b3935;
     --tooltip-bg: #282725;
     --tooltip-text: #e8e3d8;
-    --grid: rgba(156, 149, 138, 0.20);
+    --grid: rgba(156, 149, 138, 0.12);
 }
 
 html,
@@ -44,7 +44,7 @@ html {
     background-image:
         linear-gradient(to right, var(--grid) 1px, transparent 1px),
         linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
-    background-size: 22px 22px;
+    background-size: 6px 6px;
     background-attachment: fixed;
 }
 

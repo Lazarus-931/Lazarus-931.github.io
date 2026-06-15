@@ -5,6 +5,15 @@
 <style>
 .md h1:before, .md h2:before { content: none; }
 
+article {
+    max-width: 720px;
+    margin: 2.5em auto;
+    background: var(--bg);
+    border: 1px solid var(--text);
+    border-radius: 0;
+    padding: 2.4em 2.6em;
+}
+
 .note-entry {
     margin-bottom: 3em;
     padding-bottom: 2em;
@@ -43,9 +52,20 @@
 }
 </style>
 
+<article>
+
 <div style="text-align: center; margin-bottom: 4em;">
     <div style="font-size: 2em; font-weight: normal;">Writings</div>
 </div>
+
+<div class="note-entry">
+    <div class="note-title">[_Moe params, no problems!_](notes/moe.md.html)</div>
+    <div class="note-date">June 15, 2026</div>
+    <div class="note-abstract">
+        A short note on mixture-of-experts — more params, no problems. <em>(Draft.)</em>
+    </div>
+</div>
+
 
 <div class="note-entry">
     <div class="note-title">[_Exploring Aurora's Hyperparameters_](notes/aruora.md.html)</div>
@@ -69,6 +89,8 @@
 
 
 
+
+</article>
 
 <script>
 window.markdeepOptions = {

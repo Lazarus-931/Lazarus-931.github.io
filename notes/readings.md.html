@@ -7,8 +7,12 @@
 
     article {
         max-width: 650px;
-        margin: 0 auto;
+        margin: 2.5em auto;
         line-height: 1.6;
+        background: var(--bg);
+        border: 1px solid var(--text);
+        border-radius: 0;
+        padding: 2.4em 2.6em;
     }
 
     .note-title {
@@ -44,12 +48,78 @@
     .note-content a:hover {
         text-decoration-color: var(--text);
     }
+
+    /* small "to read" list, pinned top-right beside the column */
+    .note-toread {
+        position: fixed;
+        top: 48px;
+        right: 18px;
+        width: 190px;
+        z-index: 50;
+        font-size: 0.82em;
+        background: var(--bg);
+        border: 1px solid var(--text);
+        border-radius: 0;
+        padding: 10px 14px;
+    }
+
+    .note-toread .toread-label {
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 0.8em;
+        color: var(--muted);
+        margin-bottom: 0.7em;
+    }
+
+    .note-toread ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .note-toread li {
+        margin-bottom: 0.3em;
+    }
+
+    .note-toread a {
+        color: var(--text);
+        text-decoration: underline;
+        text-decoration-color: var(--muted);
+        text-underline-offset: 2px;
+    }
+
+    .note-toread a:hover {
+        text-decoration-color: var(--text);
+    }
+
+    /* no room beside the column on narrow screens — let it flow at the top */
+    @media (max-width: 1150px) {
+        .note-toread {
+            position: static;
+            width: auto;
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0 0 2.5em 0;
+        }
+    }
 </style>
 
 <article>
 
     <div class="note-title">Readings</div>
     <div class="note-date">December 25, 2025</div>
+
+    <div class="note-toread">
+        <div class="toread-label">to read</div>
+        <ul>
+            <li><a href="https://www.goodreads.com/book/show/110890.The_Looming_Tower">The Looming Tower</a></li>
+            <li><a href="https://www.goodreads.com/book/show/18730589-1177-b-c">1177 B.C.: The Year Civilization Collapsed</a></li>
+            <li><a href="https://www.goodreads.com/book/show/18176747-the-hard-thing-about-hard-things">The Hard Thing About Hard Things</a></li>
+            <li><a href="https://www.goodreads.com/book/show/5107.The_Catcher_in_the_Rye">The Catcher in the Rye</a></li>
+            <li><a href="https://www.goodreads.com/book/show/7285385-intellectuals-and-society">Intellectuals and Society</a></li>
+        </ul>
+    </div>
 
     <div class="note-content">
         __June 2026__ — *currently reading*

@@ -5,8 +5,10 @@
 <style>
 .md h1:before, .md h2:before, .md h3:before { content: none; }
 
+/* clear box around the writing: same color as the background, no border
+   lines, sharp edges — just covers the grid so the text reads clean */
 article {
-    max-width: 650px;
+    max-width: 720px;
     margin: 2.5em auto;
     line-height: 1.6;
     background: var(--bg);
@@ -40,14 +42,14 @@ article {
 
 <article>
 
-<div class="note-title">Of More to Come</div>
-<div class="note-date">December 25, 2025</div>
+<div class="note-title">Moe params, no problems!</div>
+<div class="note-date">June 15, 2026</div>
 
 <div class="note-content">
 
-This is a first of many (hopefully) series of writings on a wide variety of topics. I will try to release as consistently,
-    and with the upmost highest quality, although I can't promise the latter.
+**TL;DR**
 
+A short note on mixture-of-experts — scaling parameter count with sparse experts to buy capacity without paying proportional compute. _(Draft — more soon.)_
 
 </div>
 
@@ -61,6 +63,5 @@ window.markdeepOptions = {
 
 <!-- Markdeep: -->
 <style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style>
-<script src="markdeep.min.js" charset="utf-8"></script>
 <script src="https://morgan3d.github.io/markdeep/latest/markdeep.min.js" charset="utf-8"></script>
 <script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>
