@@ -4,7 +4,8 @@
 <title>MetalBench · Leaderboard</title>
 
 <style>
-article { max-width: 960px; margin: 0 auto; }
+article { max-width: 960px; margin: 2.5em auto; background: var(--bg);
+    border: 1px solid var(--text); border-radius: 0; padding: 2.4em 2.6em; }
 h1 { font-size: 1.6em; margin-bottom: 0.1em; }
 .subtitle { color: var(--muted); margin-bottom: 1.5em; font-size: 0.9em; }
 .subtitle a { color: var(--muted); }
@@ -34,8 +35,8 @@ th { position: sticky; top: 0; background: var(--bg); font-weight: normal; color
 .stat-label { color: var(--muted); font-size: 0.8em; }
 
 .kernel-name a { color: var(--text); text-decoration: none; }
-tr.unbenched { opacity: 0.4; }
 tr.unbenched td { color: var(--muted); }
+tr.unbenched .kernel-name a { color: var(--text); }
 .kernel-name a:hover { text-decoration: underline; }
 .score-link a { color: var(--text); text-decoration: none; font-weight: bold; }
 .score-link a:hover { text-decoration: underline; }
@@ -149,33 +150,42 @@ async function refreshLinks() {
     }
 }
 
-async function refreshData(chipId) {
-    if (!CHIPS[chipId] || !CHIPS[chipId].data) { DATA[chipId] = {}; return; }
+// Best times for ALL chips live in one aggregate at the repo root, best_times.md:
+//   | `abs` | common | — | 0.010 (21.35×) | — | 0.018 (380.45×) | — |
+// (per-kernel detail moved to results/<chip>/<name>.json; the old single
+// results/<chip>/results.md was removed, which is why nothing was loading.)
+const CHIP_COLS = ['apple-m1', 'apple-m2', 'apple-m3', 'apple-m4', 'apple-m5'];
+
+async function refreshAll() {
     try {
-        const resp = await fetch(`${GH_RAW}/results/${chipId}/results.md?t=${Date.now()}`);
-        if (!resp.ok) throw new Error('not found');
+        const resp = await fetch(`${GH_RAW}/best_times.md?t=${Date.now()}`);
+        if (!resp.ok) throw new Error('best_times.md not found');
         const text = await resp.text();
-        const parsed = {};
+        const fresh = {};
+        CHIP_COLS.forEach(c => fresh[c] = {});
         for (const line of text.split('\n')) {
-            const m = line.match(/^\|\s*(\S+)\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)×\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)\s*\|/);
-            if (!m) continue;
-            const ms = parseFloat(m[2]);
-            const sp = parseFloat(m[3]);
-            // Drop bogus rows: metal_ms below timing resolution makes speedup math explode.
-            // Anything reading as 0.000 ms or with an absurd speedup (>10000×) is noise — treat
-            // the kernel as unbenched so the dashboard shows "—" instead of nonsense.
-            if (ms <= 0.001 || sp > 10000) continue;
-            parsed[m[1]] = [ms, sp, parseFloat(m[4]), parseFloat(m[5]), 0.99];
+            // | `name` | set | <M1> | <M2> | <M3> | <M4> | <M5> |
+            const m = line.match(/^\|\s*`([^`]+)`\s*\|\s*(\w+)\s*\|(.+)\|\s*$/);
+            if (!m) continue;                      // skips header + separator rows
+            const name = m[1];
+            SET_OF[name] = m[2];
+            m[3].split('|').map(s => s.trim()).forEach((cell, i) => {
+                if (i >= CHIP_COLS.length) return;
+                const cm = cell.match(/([\d.]+)\s*\(([\d.]+)×\)/);   // "0.010 (21.35×)"
+                if (!cm) return;                   // "—" = unbenched on this chip
+                const ms = parseFloat(cm[1]), sp = parseFloat(cm[2]);
+                if (!(ms > 0)) return;
+                fresh[CHIP_COLS[i]][name] = [ms, sp, 0, 0, 0.99];
+            });
         }
-        if (Object.keys(parsed).length > 0) {
-            DATA[chipId] = parsed;
-            lastRefresh = new Date();
-            document.getElementById('refresh-note').textContent = `(live, updated ${lastRefresh.toLocaleTimeString()})`;
-            return;
-        }
-    } catch(e) {}
-    // Fetch failed — leave DATA[chipId] empty; render() will show a "no data" message.
-    document.getElementById('refresh-note').textContent = '(could not fetch results.md — repo may be private or offline)';
+        CHIP_COLS.forEach(c => { DATA[c] = fresh[c]; });
+        lastRefresh = new Date();
+        document.getElementById('refresh-note').textContent = `(live, updated ${lastRefresh.toLocaleTimeString()})`;
+        return true;
+    } catch (e) {
+        document.getElementById('refresh-note').textContent = '(could not fetch best_times.md — repo may be private or offline)';
+        return false;
+    }
 }
 
 function render() {
@@ -249,13 +259,9 @@ function render() {
         <div class="stat"><div class="stat-val">${beating}</div><div class="stat-label">≥1× MLX</div></div>`;
 }
 
-async function showChip(id) {
-    chip = id;
+function showChip(id) {
+    chip = id;          // all chips already loaded by refreshAll()
     updateTabs();
-    if (!DATA[id] || Object.keys(DATA[id]).length === 0) {
-        document.getElementById('table').innerHTML = '<p style="color:var(--muted)">Loading...</p>';
-        await refreshData(id);
-    }
     render();
 }
 
@@ -283,11 +289,10 @@ window.showSet = showSet;
     document.getElementById('set-tabs').innerHTML = setTabs;
     document.getElementById('set-' + setFilter).classList.add('active');
 
-    // Load LINK.md once + initial benchmark data in parallel.
+    // Load LINK.md (source links) + all benchmark data (best_times.md) in parallel.
     await Promise.all([
         refreshLinks(),
-        refreshData('apple-m2'),
-        refreshData('apple-m4'),
+        refreshAll(),
     ]);
 
     updateTabs();
@@ -295,7 +300,7 @@ window.showSet = showSet;
 
     // Hourly refresh of both data and links (links rarely change but cheap to re-pull).
     setInterval(async () => {
-        await Promise.all([refreshLinks(), refreshData(chip)]);
+        await Promise.all([refreshLinks(), refreshAll()]);
         render();
     }, 3600000);
 })();
@@ -306,4 +311,4 @@ function updateTabs() {
     if (el) el.classList.add('active');
 }
 </script>
-<!-- cache-bust 1779544175 -->
+<!-- cache-bust 1781700000 -->
