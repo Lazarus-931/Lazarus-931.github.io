@@ -1,19 +1,10 @@
 <meta charset="utf-8">
 <link rel="stylesheet" href="../assets/theme.css">
 <script src="../assets/theme.js"></script>
+<script src="../assets/sidenotes.js"></script>
 
 <style>
 .md h1:before, .md h2:before, .md h3:before { content: none; }
-
-article {
-    max-width: 720px;
-    margin: 2.5em auto;
-    line-height: 1.6;
-    background: var(--bg);
-    border: 1px solid var(--text);
-    border-radius: 0;
-    padding: 2.4em 2.6em;
-}
 
 .note-title {
     font-size: 2em;
@@ -67,8 +58,8 @@ figure {
 figure img {
     max-width: 100%;
     border-radius: 4px;
-    border: 1px solid var(--muted);
-    background: white;
+    border: 1px solid var(--border);
+    background: #fff;
 }
 figcaption {
     color: var(--muted);
@@ -78,8 +69,8 @@ figcaption {
 }
 
 .callout {
-    background: var(--card, #f6f6f8);
-    border-left: 3px solid var(--accent, #c12d1d);
+    background: var(--card);
+    border-left: 3px solid var(--accent);
     padding: 0.7em 1em;
     margin: 1.2em 0;
     font-size: 0.94em;

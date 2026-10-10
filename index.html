@@ -3,6 +3,10 @@
 <script src="assets/theme.js"></script>
 
 <style>
+article.home {
+    max-width: var(--page);
+}
+
 .profile-photo {
     border: 1px solid var(--border);
 }
@@ -77,6 +81,8 @@
 }
 </style>
 
+<article class="home">
+
 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
 <div style="flex: 1;">
 
@@ -88,22 +94,13 @@ _{🇪🇹 ∈ birthplace, 🇺🇸 ∈ upbringing}_
 
 What up, I'm Alazer, I do CS + Math at Northeastern.
 
-    I'm interested in two things general space of machine learning.
+    I mostly spend time thinking about the absencet core of true generalizableintelligence and hardware plays a role.
 
-    First, is the rethinking of new architectures and current mathematical upbringing that have led to current sota,
-    from views on data, to how we define intelligence on modern silicon. I like studying what makes models learn, how to make them learn better and
-    importantly how to best utilize current hardware. 
-
-    On the systems side, is the bridging the theory to systems, asking what can be achieved through utilizing every
-    component of designing intellignece. 
+    I'm broadly interested in designing intelligence and to a capacity, seeing how we can create hardware to support it that is to say!
 
     To say, how can we better bridge the gap between theory and systems?
 
-    Currently, I am ...
-        make gpus go faster
-        exploring optimizers
-
-    I also do 🏋🏾‍♀️, ⚽️, 📖
+    I also do 🏋🏾‍♀️, ⚽️, 📖, 🏞️
 
 Reach me at [first] + [lastname] + [b] @ [gmail] . com, or also book <a href="#" data-cal-link="alazar-manakelew-a7db1i/30min" data-cal-namespace="30min" data-cal-config='{"layout":"month_view"}'>a chat with me!</a>
 
@@ -114,11 +111,11 @@ Reach me at [first] + [lastname] + [b] @ [gmail] . com, or also book <a href="#"
 </div>
 </div>
 
-[CV (April 2026)](cv.pdf.html)
+[Resume (October 2026)](resume.pdf)
 
-[Writings](writings.md.html) <a class="keyhint" data-key="w" href="writings.md.html">w</a>
+[Blog](blog.md.html) <a class="keyhint" data-key="b" href="blog.md.html">b</a>
 
-[bookshelf](notes/readings.md.html) <a class="keyhint" data-key="b" href="notes/readings.md.html">b</a>
+[bookshelf](notes/readings.md.html) <a class="keyhint" data-key="r" href="notes/readings.md.html">r</a>
 
 [Links](notes/links.md.html) <a class="keyhint" data-key="l" href="notes/links.md.html">l</a>
 
@@ -131,16 +128,13 @@ Reach me at [first] + [lastname] + [b] @ [gmail] . com, or also book <a href="#"
 </div>
 </div>
 
+</article>
+
 <script>
 (function () {
     function isTyping(t) {
         return t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable);
     }
-    var NAV = {
-        KeyW: "writings.md.html",
-        KeyB: "notes/readings.md.html",
-        KeyL: "notes/links.md.html"
-    };
     var SOCIAL = {
         KeyX: "https://x.com/alaxarr",
         KeyL: "https://www.linkedin.com/in/alazer-manakelew1/",
@@ -156,7 +150,6 @@ Reach me at [first] + [lastname] + [b] @ [gmail] . com, or also book <a href="#"
             if (SOCIAL[e.code]) { e.preventDefault(); window.open(SOCIAL[e.code], "_blank", "noopener"); }
             return;
         }
-        if (NAV[e.code]) { e.preventDefault(); window.location.href = NAV[e.code]; }  // w/r/l -> nav
     });
     document.addEventListener("keyup", function (e) { if (e.key === "Shift") setOpen(false); });
     window.addEventListener("blur", function () { setOpen(false); });
