@@ -1,16 +1,18 @@
+@import url("https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@500&display=swap");
+
 :root {
-    color-scheme: dark;
+    color-scheme: light;
 
-    --bg: #000;
-    --text: #dcd9d2;
-    --muted: #837d73;
-    --border: #26251f;
-    --rule: #3a382f;
-    --tooltip-bg: #0d0d0c;
-    --tooltip-text: #dcd9d2;
+    --bg: #f5f0e6;
+    --text: #2a2620;
+    --muted: #6e675b;
+    --border: #e0d8c8;
+    --rule: #cbc0ab;
+    --tooltip-bg: #ece5d6;
+    --tooltip-text: #2a2620;
 
-    --card: #0c0c0b;
-    --accent: #c9a227;
+    --card: #ece5d6;
+    --accent: #9c7a12;
 
     --measure: 760px;
     --gutter: 44px;
@@ -23,7 +25,7 @@ html,
 body {
     background-color: var(--bg);
     color: var(--text);
-    font-family: "Times New Roman", Times, serif;
+    font-family: Georgia, serif;
 }
 
 body {
@@ -64,16 +66,6 @@ article img {
     height: auto;
 }
 
-article .wide {
-    max-width: none;
-    width: max(100%, min(1200px, 100vw - 320px));
-    margin-left: 0;
-    margin-right: 0;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
 .sidenote {
     position: absolute;
     left: calc(var(--measure) + var(--pad) + var(--gutter));
@@ -83,6 +75,7 @@ article .wide {
     color: var(--muted);
     text-align: left;
     hyphens: none;
+    cursor: pointer;
 }
 
 .sidenote sup {
@@ -112,10 +105,257 @@ article .wide {
     display: none;
 }
 
-@media (max-width: 1180px) {
-    .sidenote {
+article:not(.has-sidenotes) .sidenote {
+    display: none;
+}
+
+.sidenote.is-collapsed {
+    max-height: 1.45em;
+    overflow: hidden;
+    opacity: 0.5;
+    -webkit-mask-image: linear-gradient(to right, #000 60%, transparent);
+    mask-image: linear-gradient(to right, #000 60%, transparent);
+}
+
+.site-nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.4em 1.8em;
+    margin: 1.8em auto 0;
+    padding: 0 var(--pad);
+    font-size: 0.95em;
+}
+
+body .md .site-nav a:link,
+body .md .site-nav a:visited,
+.site-nav a {
+    color: var(--muted);
+    text-decoration: none;
+}
+
+body .md .site-nav a:link:hover,
+.site-nav a:hover {
+    color: var(--text);
+}
+
+body .md .site-nav a[aria-current="page"],
+.site-nav a[aria-current="page"] {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 5px;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+.md a.anchor {
+    scroll-margin-top: 1.5em;
+}
+
+.toc {
+    position: fixed;
+    top: 3.5em;
+    left: 20px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 14px 8px 8px;
+    text-align: left;
+}
+
+.toc-title {
+    margin-bottom: 6px;
+    color: var(--muted);
+    font-size: 0.75em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+body .md .toc a:link,
+body .md .toc a:visited,
+.toc a {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 4px 0;
+    color: var(--muted);
+    font-size: 0.85em;
+    line-height: 1.3;
+    text-decoration: none;
+}
+
+body .md .toc a:link:hover,
+.toc a:hover {
+    color: var(--text);
+}
+
+.toc .tick {
+    flex: none;
+    width: 18px;
+    height: 2px;
+    margin-top: 0.6em;
+    background: var(--rule);
+    transition: background 0.2s ease;
+}
+
+.toc .toc-h2 .tick {
+    width: 10px;
+    margin-left: 8px;
+}
+
+.toc .toc-h3 .tick {
+    width: 6px;
+    margin-left: 12px;
+}
+
+.toc a:hover .tick {
+    background: var(--text);
+}
+
+.toc-title,
+.toc .label {
+    filter: blur(2.5px);
+    opacity: 0;
+    transition: filter 0.35s ease, opacity 0.35s ease;
+}
+
+.toc .label {
+    width: min(130px, 50vw - 600px);
+}
+
+.toc:hover .toc-title,
+.toc:hover .label,
+.toc:focus-within .toc-title,
+.toc:focus-within .label {
+    filter: none;
+    opacity: 1;
+}
+
+@media (max-width: 1359px) {
+    .toc-title,
+    .toc .label {
         display: none;
     }
+}
+
+@media (max-width: 900px) {
+    .toc {
+        display: none;
+    }
+}
+
+body .md details {
+    margin: 1.5em 0;
+    padding: 0.2em 0 0.2em 1em;
+    border-left: 2px solid var(--rule);
+}
+
+body .md details[open] {
+    border-left-color: var(--accent);
+    padding-bottom: 0.6em;
+}
+
+body .md details > summary {
+    cursor: pointer;
+    list-style: none;
+    color: var(--text);
+}
+
+body .md details > summary::-webkit-details-marker {
+    display: none;
+}
+
+body .md details > summary::before {
+    content: "▸";
+    display: inline-block;
+    width: 1em;
+    color: var(--accent);
+    transition: transform 0.15s;
+}
+
+body .md details[open] > summary::before {
+    transform: rotate(90deg);
+}
+
+
+.md button.zoom {
+    display: block;
+    width: 100%;
+    margin: 0.2em 0 0.4em;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: zoom-in;
+}
+
+.md button.zoom img {
+    display: block;
+    width: 100%;
+}
+
+.lightbox img {
+    display: block;
+    width: min(92vw, 92vh * 400 / 560);
+    margin: auto;
+}
+
+.lightbox {
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+.lightbox::backdrop {
+    background: rgba(245, 240, 230, 0.85);
+    backdrop-filter: blur(8px);
+}
+
+.lightbox button {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: zoom-out;
+}
+
+body .md iframe.demo {
+    display: block;
+    width: 100%;
+    height: 560px;
+    margin-top: 1em;
+    border: 0;
+}
+
+body .md h1::first-letter,
+body .md h2::first-letter,
+body .md h3::first-letter,
+body .md h4::first-letter,
+body .md h5::first-letter,
+body .md h6::first-letter,
+.note-title::first-letter,
+.page-title::first-letter {
+    font-family: "Grenze Gotisch", serif;
+    font-weight: 500;
+    font-size: 1.4em;
+    line-height: 0;
+    margin-right: 0.03em;
 }
 
 body .md a:link,
@@ -133,7 +373,7 @@ body .md a:link:hover {
 body .md p,
 body .md li,
 body .md .note-content,
-body .md .series-abstract {
+body .md .note-abstract {
     text-align: left;
 }
 
@@ -146,16 +386,29 @@ body .md sup a[href^="#endnote-"]:hover {
     color: var(--text);
 }
 
+body .md a,
+body .md h1,
+body .md h2,
+body .md h3,
+body .md h4,
+body .md h5,
+body .md h6,
+body .md .tocHeader,
+body .md [class^="nonumberh"],
+body .md summary {
+    font-family: inherit;
+}
+
 body .md h1,
 body .md .tocHeader,
 body .md .nonumberh1 {
-    border-bottom: 1px solid var(--border);
+    border-bottom: 2px solid var(--text);
     font-weight: normal;
 }
 
 body .md h2,
 body .md .nonumberh2 {
-    border-bottom: 1px solid var(--border);
+    border-bottom: 2px solid var(--text);
     color: var(--text);
     font-weight: normal;
 }
@@ -196,7 +449,7 @@ body .md table.table th {
 }
 
 body .md table.table tr:nth-child(even) {
-    background: #0a0a09;
+    background: var(--card);
 }
 
 body .md .mediumTOC {
@@ -222,7 +475,5 @@ body .md svg.diagram .dotteddot {
 }
 
 body .markdeepFooter {
-    color: var(--border);
-    padding-right: var(--pad);
-    padding-bottom: var(--pad);
+    display: none;
 }

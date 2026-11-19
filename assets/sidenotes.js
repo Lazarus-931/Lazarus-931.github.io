@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var MIN_WIDTH = 1181;
+    var MIN_MEASURE = 480;
     var GAP = 12;
 
     var article, notes = [];
@@ -46,6 +46,11 @@
             ref.addEventListener("mouseleave", off);
             aside.addEventListener("mouseenter", on);
             aside.addEventListener("mouseleave", off);
+            aside.addEventListener("click", function (e) {
+                if (e.target.closest("a, button")) return;
+                aside.classList.toggle("is-collapsed");
+                layout();
+            });
 
             notes.push({ ref: ref, aside: aside, original: note.original });
         });
@@ -56,10 +61,17 @@
     function layout() {
         if (!article || !notes.length) return;
 
-        var wide = window.innerWidth >= MIN_WIDTH;
+        var root = getComputedStyle(document.documentElement);
+        var pad = parseFloat(root.getPropertyValue("--pad"));
+        var gutter = parseFloat(root.getPropertyValue("--gutter"));
+        var side = parseFloat(root.getPropertyValue("--sidenote-w"));
+        var room = document.documentElement.clientWidth - 2 * pad - gutter - side;
+        var measure = Math.min(parseFloat(root.getPropertyValue("--measure")), room);
 
-        if (!wide) {
+        if (measure < MIN_MEASURE) {
             article.classList.remove("has-sidenotes");
+            article.style.removeProperty("--measure");
+            article.style.removeProperty("--page");
             notes.forEach(function (n) {
                 n.original.classList.remove("is-relocated");
                 n.aside.style.top = "";
@@ -67,6 +79,8 @@
             return;
         }
 
+        article.style.setProperty("--measure", measure + "px");
+        article.style.setProperty("--page", measure + gutter + side + 2 * pad + "px");
         article.classList.add("has-sidenotes");
         notes.forEach(function (n) { n.original.classList.add("is-relocated"); });
 
@@ -93,6 +107,21 @@
         window.addEventListener("resize", relayout);
         if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
         window.addEventListener("load", relayout);
+        afterMath(layout);
+        if (window.ResizeObserver) {
+            var observer = new ResizeObserver(relayout);
+            observer.observe(article);
+            notes.forEach(function (n) { observer.observe(n.aside); });
+        }
+    }
+
+    function afterMath(fn) {
+        var tries = 0;
+        (function wait() {
+            var startup = window.MathJax && window.MathJax.startup;
+            if (startup && startup.promise) startup.promise.then(fn);
+            else if (++tries < 100) setTimeout(wait, 100);
+        })();
     }
 
     function whenReady(fn) {

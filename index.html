@@ -4,7 +4,15 @@
 
 <style>
 article.home {
-    max-width: var(--page);
+    max-width: 860px;
+    margin-bottom: 1.5em;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 7.5em);
+}
+
+article.home > p:empty {
+    display: none;
 }
 
 .profile-photo {
@@ -19,67 +27,36 @@ article.home {
     color: var(--muted);
 }
 
-/* keyboard hints next to nav links: [w] [r] [l] */
-.keyhint {
-    font-family: "Courier New", monospace;
-    font-size: 0.82em;
-    color: var(--muted);
-    text-decoration: none;
-    margin-left: 5px;
-    vertical-align: middle;
-}
-.keyhint::before { content: "["; }
-.keyhint::after  { content: "]"; }
-.keyhint:hover { color: var(--text); }
-
-/* [shift] socials dropdown */
-.socials {
-    position: relative;
-    display: inline-block;
-    margin-top: 0.4em;
-}
-.socials-trigger {
-    font-family: "Courier New", monospace;
-    font-size: 0.85em;
-    color: var(--muted);
-    cursor: pointer;
-    user-select: none;
-}
-.socials-trigger:hover { color: var(--text); }
-.socials-menu {
-    display: none;
-    position: absolute;
-    left: 0;
-    top: 1.7em;
-    min-width: 150px;
-    background: var(--tooltip-bg);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 4px 0;
-    z-index: 9998;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
-}
-.socials.open .socials-menu { display: block; }
-.socials-menu a {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    padding: 4px 12px;
-    text-decoration: none;
-    color: var(--text);
-}
-.socials-menu a:hover { background: var(--bg); }
-.socials-menu .sk {
-    font-family: "Courier New", monospace;
-    font-size: 0.78em;
-    color: var(--muted);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 0 5px;
-    min-width: 1.5em;
+.cv {
     text-align: center;
+    margin-top: 1em;
+}
+
+.social-links {
+    display: flex;
+    gap: 18px;
+    margin-top: auto;
+    padding-top: 1.2em;
+    border-top: 1px solid var(--rule);
+}
+body .md .social-links a,
+.social-links a {
+    color: #000;
+    text-decoration: none;
+}
+body .md .social-links a:hover,
+.social-links a:hover {
+    opacity: 0.6;
+}
+.social-links svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
 }
 </style>
+
+<nav class="site-nav" aria-label="Site"><a href="index.html" aria-current="page">about</a><a href="writings.md.html">writings</a><a href="notes/readings.md.html">readings</a><a href="notes/links.md.html">links</a></nav>
 
 <article class="home">
 
@@ -88,87 +65,30 @@ article.home {
 
 <div style="font-size: 2em; font-weight: bold; margin-bottom: 0.5em;">Alazer Manakelew</div>
 
-CS ∈ Northeastern
+CS + Math ∈ [NEU](https://www.northeastern.edu)
 
-_{🇪🇹 ∈ birthplace, 🇺🇸 ∈ upbringing}_
+What up, I'm Alazer.
 
-What up, I'm Alazer, I do CS + Math at Northeastern.
+    I'm interested in deep learning, specifically generalization and how we can develop more data-efficient and biologically inspired intelligence.
 
-    I mostly spend time thinking about the absencet core of true generalizableintelligence and hardware plays a role.
-
-    I'm broadly interested in designing intelligence and to a capacity, seeing how we can create hardware to support it that is to say!
-
-    To say, how can we better bridge the gap between theory and systems?
+    I'm also interested in broader ML systems, from hardware architecture to higher-level model design.
 
     I also do 🏋🏾‍♀️, ⚽️, 📖, 🏞️
 
-Reach me at [first] + [lastname] + [b] @ [gmail] . com, or also book <a href="#" data-cal-link="alazar-manakelew-a7db1i/30min" data-cal-namespace="30min" data-cal-config='{"layout":"month_view"}'>a chat with me!</a>
+Reach me at [first] + [lastname] + [b] @ gmail.com.
 
 </div>
-<div style="margin-left: 20px;">
+<div style="margin-left: 36px;">
 <img src="assets/prof_pic.jpg" width="250px" class="profile-photo">
 <p class="caption">Figure 1.1 Me, circa 2025</p>
+<p class="cv"><a href="resume.pdf">CV (Oct '26)</a></p>
 </div>
 </div>
 
-[Resume (October 2026)](resume.pdf)
 
-[Blog](blog.md.html) <a class="keyhint" data-key="b" href="blog.md.html">b</a>
 
-[bookshelf](notes/readings.md.html) <a class="keyhint" data-key="r" href="notes/readings.md.html">r</a>
-
-[Links](notes/links.md.html) <a class="keyhint" data-key="l" href="notes/links.md.html">l</a>
-
-<div class="socials" id="socials">
-<span class="socials-trigger" id="socialsTrigger">[shift] socials</span>
-<div class="socials-menu" id="socialsMenu">
-<a href="https://x.com/alaxarr" target="_blank" rel="noopener" data-key="x"><span class="sk">X</span> x</a>
-<a href="https://www.linkedin.com/in/alazer-manakelew1/" target="_blank" rel="noopener" data-key="L"><span class="sk">L</span> linkedin</a>
-<a href="https://github.com/Lazarus-931" target="_blank" rel="noopener" data-key="G"><span class="sk">G</span> github</a>
-</div>
-</div>
+<div class="social-links"><a href="https://x.com/alaxarr" target="_blank" rel="noopener" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></a><a href="https://www.linkedin.com/in/alazer-manakelew1/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a><a href="https://github.com/Lazarus-931" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a></div>
 
 </article>
-
-<script>
-(function () {
-    function isTyping(t) {
-        return t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable);
-    }
-    var SOCIAL = {
-        KeyX: "https://x.com/alaxarr",
-        KeyL: "https://www.linkedin.com/in/alazer-manakelew1/",
-        KeyG: "https://github.com/Lazarus-931"
-    };
-    function socials() { return document.getElementById("socials"); }
-    function setOpen(on) { var s = socials(); if (s) s.classList.toggle("open", on); }
-
-    document.addEventListener("keydown", function (e) {
-        if (isTyping(e.target) || e.metaKey || e.ctrlKey || e.altKey) return;
-        if (e.key === "Shift") { setOpen(true); return; }       // hold shift -> show socials
-        if (e.shiftKey) {                                        // shift + letter -> open social
-            if (SOCIAL[e.code]) { e.preventDefault(); window.open(SOCIAL[e.code], "_blank", "noopener"); }
-            return;
-        }
-    });
-    document.addEventListener("keyup", function (e) { if (e.key === "Shift") setOpen(false); });
-    window.addEventListener("blur", function () { setOpen(false); });
-
-    // click [shift] label to toggle the menu (mouse/touch fallback)
-    document.addEventListener("click", function (e) {
-        var trigger = e.target.closest && e.target.closest("#socialsTrigger");
-        if (trigger) { e.preventDefault(); var s = socials(); if (s) s.classList.toggle("open"); return; }
-        if (!(e.target.closest && e.target.closest("#socials"))) setOpen(false);
-    });
-})();
-</script>
-
-<!-- Cal popup embed code begins -->
-<script type="text/javascript">
-  (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
-  Cal("init", "30min", {origin:"https://app.cal.com"});
-  Cal.ns["30min"]("ui", {"hideEventTypeDetails":false,"layout":"month_view"});
-</script>
-<!-- Cal popup embed code ends -->
 
 <!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script src="https://morgan3d.github.io/markdeep/latest/markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>
