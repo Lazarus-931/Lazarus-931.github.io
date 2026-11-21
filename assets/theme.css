@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap");
 
 :root {
     color-scheme: light;
@@ -13,6 +13,7 @@
 
     --card: #ece5d6;
     --accent: #9c7a12;
+    --highlight: #46719E;
 
     --measure: 760px;
     --gutter: 44px;
@@ -39,6 +40,11 @@ body:has(> div.md) {
 
 a {
     color: inherit;
+}
+
+::selection {
+    background: rgba(144, 182, 218, 0.45);
+    color: var(--text);
 }
 
 article,
@@ -93,8 +99,8 @@ article img {
 }
 
 .sidenote a:hover {
-    color: var(--text);
-    text-decoration-color: var(--muted);
+    color: var(--highlight);
+    text-decoration-color: var(--highlight);
 }
 
 .sidenote.is-active {
@@ -136,7 +142,7 @@ body .md .site-nav a:visited,
 
 body .md .site-nav a:link:hover,
 .site-nav a:hover {
-    color: var(--text);
+    color: var(--highlight);
 }
 
 body .md .site-nav a[aria-current="page"],
@@ -196,7 +202,7 @@ body .md .toc a:visited,
 
 body .md .toc a:link:hover,
 .toc a:hover {
-    color: var(--text);
+    color: var(--highlight);
 }
 
 .toc .tick {
@@ -219,7 +225,7 @@ body .md .toc a:link:hover,
 }
 
 .toc a:hover .tick {
-    background: var(--text);
+    background: var(--highlight);
 }
 
 .toc-title,
@@ -351,8 +357,8 @@ body .md h5::first-letter,
 body .md h6::first-letter,
 .note-title::first-letter,
 .page-title::first-letter {
-    font-family: "Grenze Gotisch", serif;
-    font-weight: 500;
+    font-family: "UnifrakturMaguntia", serif;
+    font-weight: normal;
     font-size: 1.4em;
     line-height: 0;
     margin-right: 0.03em;
@@ -366,8 +372,10 @@ body .md a:visited {
     text-underline-offset: 2px;
 }
 
-body .md a:link:hover {
-    text-decoration-color: var(--text);
+body .md a:link:hover,
+body .md a:visited:hover {
+    color: var(--highlight);
+    text-decoration-color: var(--highlight);
 }
 
 body .md p,
@@ -383,7 +391,7 @@ body .md sup a[href^="#endnote-"] {
 }
 
 body .md sup a[href^="#endnote-"]:hover {
-    color: var(--text);
+    color: var(--highlight);
 }
 
 body .md a,
@@ -476,4 +484,25 @@ body .md svg.diagram .dotteddot {
 
 body .markdeepFooter {
     display: none;
+}
+
+body .md a.fn-entry:link,
+body .md a.fn-entry:visited {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1em;
+    padding: 0.5em 0;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+}
+
+body .md a.fn-entry:hover {
+    color: var(--highlight);
+}
+
+.fn-date {
+    flex: none;
+    color: var(--muted);
+    font-size: 0.9em;
 }

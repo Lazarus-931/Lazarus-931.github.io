@@ -72,7 +72,7 @@ window.markdeepOptions = {{
 
 
 NAV_LINKS = [("about", "index.html"), ("writings", "writings.md.html"),
-             ("readings", "notes/readings.md.html"),
+             ("field-notes", "field-notes/field-notes.md.html"), ("bookshelf", "notes/readings.md.html"),
              ("links", "notes/links.md.html")]
 
 

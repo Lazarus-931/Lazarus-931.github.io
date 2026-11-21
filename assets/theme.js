@@ -10,7 +10,8 @@
 
     var NAV = {
         KeyW: "writings.md.html",
-        KeyR: "notes/readings.md.html",
+        KeyF: "field-notes/field-notes.md.html",
+        KeyB: "notes/readings.md.html",
         KeyL: "notes/links.md.html",
         KeyH: "index.html"
     };

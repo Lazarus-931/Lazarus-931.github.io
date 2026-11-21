@@ -20,18 +20,6 @@
             h4 {
                 margin-top: 1.5em;
             }
-            button {
-                border: none;
-                background: none;
-                cursor: pointer;
-                font-size: 1em;
-                margin-left: 5px;
-            }
-            .audio-error {
-                color: var(--muted);
-                font-size: 0.9em;
-                margin-left: 5px;
-            }
             .citation {
                 position: relative;
                 display: inline-block;
@@ -78,28 +66,10 @@
         </style>
     </head>
     <body>
-<nav class="site-nav" aria-label="Site"><a href="../index.html">about</a><a href="../writings.md.html" aria-current="page">writings</a><a href="../notes/readings.md.html">readings</a><a href="../notes/links.md.html">links</a></nav>
+<nav class="site-nav" aria-label="Site"><a href="../index.html">about</a><a href="../writings.md.html" aria-current="page">writings</a><a href="../field-notes/field-notes.md.html">field-notes</a><a href="../notes/readings.md.html">bookshelf</a><a href="../notes/links.md.html">links</a></nav>
 
         <h1>Blackholes but in ASCII (All thanks to Interstellar)</h1>
         <h2>What I learned as well as source for anyone attempting this</h2>
-        <p>
-            <em
-                >While you read this, listen to the film's score, a masterpiece
-                <a href="#" class="citation"
-                    >[1]
-                    <span class="tooltip">
-                        <img src="../assets/note_images/Flaming Piano.jpg" />
-                    </span>
-                </a>
-            </em>
-            <button id="playButton" onclick="playAudio()">▶️</button>
-            <span id="audioStatus" class="audio-error"></span>
-        </p>
-        <audio
-            id="myAudio"
-            src="../assets/audio/interstellar_theme.mp3"
-            preload="metadata"
-        ></audio>
         <p>
             Black holes are amazing and also intriguing. Which is why, inspired
             by the
@@ -107,7 +77,7 @@
                 >rotating donut</a
             >, I decided to make a black hole rendering purely from ASCII
             <a href="#" class="citation"
-                >[2]
+                >[1]
                 <span class="tooltip">
                     I will be using: '.', ',', '-', '~', ':', ';', '=', '!',
                     '*', '#', '$', '@'
@@ -116,7 +86,7 @@
             . Not in c however, since that is not my forte, but in python. No
             OpenGL, no graphics library, just pure math and ASCII characters.
             <a href="#" class="citation"
-                >[3]
+                >[2]
                 <span class="tooltip">
                     <img src="../assets/note_images/image3.jpg" />
                 </span>
@@ -125,7 +95,7 @@
         <p>
             <strong>TL;DR</strong> - Made a code to show a live black hole
             <a href="#" class="citation"
-                >[4]
+                >[3]
                 <span class="tooltip">
                     A curved gravitational field made up of spacetime, where so
                     much matter is condenced in such a small area, that it
@@ -199,7 +169,7 @@
             <figcaption>
                 This represents the horizion which is just a sphere. It is going
                 to be going outwards at the speed of light!
-                <a href="https://www.desmos.com/calculator/fx4glt1ixc">[5]</a>
+                <a href="https://www.desmos.com/calculator/fx4glt1ixc">[4]</a>
             </figcaption>
         </figure>
 
@@ -213,7 +183,7 @@
                 This represents the accretion disc of the black hole. A kind of
                 brain-scrambling representation of the outer part of the black
                 hole!
-                <a href="https://www.desmos.com/calculator/crpikcjeuy">[6]</a>
+                <a href="https://www.desmos.com/calculator/crpikcjeuy">[5]</a>
             </figcaption>
         </figure>
 
@@ -252,7 +222,7 @@
             Where φ (phi) is the polar angle (0 to π) and θ (theta) is the
             azimuthal
             <a href="#" class="citation"
-                >[7]
+                >[6]
                 <span class="tooltip">
                     This is not a mayan demigod, it's a basically an angle
                     around an axis
@@ -276,22 +246,5 @@
                     points.append((x, y, z))
         </code></pre>
 
-        <script>
-            const audio = document.getElementById("myAudio");
-            const playButton = document.getElementById("playButton");
-            const audioStatus = document.getElementById("audioStatus");
-
-            function playAudio() {
-                audio.play().catch((error) => {
-                    console.error("Audio playback failed:", error);
-                    audioStatus.textContent =
-                        "(Audio file not found - add interstellar_theme.mp3 to ../assets/audio/)";
-                });
-            }
-
-            audio.addEventListener("ended", () => {
-                playButton.innerHTML = "▶️";
-            });
-        </script>
     </body>
 </html>
